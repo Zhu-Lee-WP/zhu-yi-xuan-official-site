@@ -494,57 +494,97 @@
     </footer>
 
     <script>
-        // ▼▼▼ 請用這個新版本，完整替換掉您檔案中第一個 <script> 標籤內的全部內容 ▼▼▼
-document.addEventListener('DOMContentLoaded', function() {
-    const menuBtn = document.getElementById('menu-btn');
-    const mobileMenu = document.getElementById('mobile-menu');
-
-    // 漢堡選單功能
-    menuBtn.addEventListener('click', () => {
-        mobileMenu.classList.toggle('hidden');
-    });
-    
-    // 頁內平滑滾動
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            if (!mobileMenu.classList.contains('hidden')) {
-                mobileMenu.classList.add('hidden');
-            }
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    });
-
-    // --- 【全新】商品分類篩選邏輯 ---
+document.addEventListener('DOMContentLoaded', () => {
+    const productGrid = document.getElementById('product-grid');
     const filterButtons = document.querySelectorAll('#filter-buttons .tab-btn');
-    const coffeeCards = document.querySelectorAll('.coffee-card');
 
-    filterButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            // 更新按鈕樣式
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            button.classList.add('active');
+    // 【已修改】函式現在會接收一個 stockData 參數
+    function createProductCard(product, stockData = {}) {
+        let specsHtml = '';
+        product.specs.forEach((spec, index) => {
+            const isChecked = index === 0 ? 'checked' : '';
+            const sku = `${product.id}_${spec.id}`;
+            const stock = stockData[sku] !== undefined ? parseInt(stockData[sku], 10) : 'N/A'; // 從庫存資料中取得庫存
+            const isOutOfStock = stock <= 0;
 
-            const filter = button.dataset.filter;
-
-            // 篩選商品卡片
-            coffeeCards.forEach(card => {
-                const category = card.dataset.category;
-                
-                // 檢查商品的分類 (category) 是否包含我們點擊的過濾條件 (filter)
-                // 如果點擊的是 "all"，或商品的分類中包含該過濾詞，就顯示
-                if (filter === 'all' || (category && category.includes(filter))) {
-                    card.style.display = 'flex'; // 使用 flex 以維持卡片內部排版
-                } else {
-                    card.style.display = 'none';
-                }
-            });
+            specsHtml += `
+                <label class="flex items-center p-1 border rounded-lg cursor-pointer ${isOutOfStock ? 'opacity-50 bg-gray-100' : 'hover:bg-amber-50'}">
+                    <input type="radio" name="spec_${product.id}" class="h-3 w-3 md:h-4 md:w-4 text-amber-600 border-gray-300 focus:ring-amber-500" value="${spec.id}" data-price="${spec.price}" data-spec-name="${spec.name}" ${isChecked} ${isOutOfStock ? 'disabled' : ''}>
+                    <div class="ml-2 text-gray-700 flex flex-col">
+                        <span class="font-semibold md:font-bold text-xs md:text-sm">${spec.name} ${isOutOfStock ? '(售完)' : ''}</span>
+                        <span class="text-xs md:text-sm font-semibold text-gray-800 ml-1">NT$ ${spec.price}</span>
+                    </div>
+                </label>
+            `;
         });
-    });
+
+        // 檢查整個商品的所有規格是否都已售完
+        const allSpecsOutOfStock = product.specs.every(spec => {
+            const sku = `${product.id}_${spec.id}`;
+            return stockData[sku] !== undefined && parseInt(stockData[sku], 10) <= 0;
+        });
+
+        const buttonHtml = allSpecsOutOfStock
+            ? `<button class="w-full bg-gray-400 text-white font-bold py-1.5 px-2 rounded-lg cursor-not-allowed" disabled>庫存不足</button>`
+            : `<button class="add-to-cart-btn w-full bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded-lg transition-colors duration-300 text-xs md:text-sm" data-name="${product.name}">加入購物車</button>`;
+
+        return `
+            <div class="coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}">
+                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain">
+                <div class="p-3 md:p-4 flex-grow flex flex-col">
+                    <h3 class="text-sm md:text-base font-bold text-amber-800 mb-1 h-14 md:h-16">${product.name}</h3>
+                    <p class="text-gray-600 text-xs md:text-sm leading-5 mb-2">${product.description}</p>
+                    <div class="space-y-1">${specsHtml}</div>
+                    <div class="mt-auto pt-2">${buttonHtml}</div>
+                </div>
+            </div>
+        `;
+    }
+
+    async function initializeShop() {
+        try {
+            // 【新】同時發出兩個請求：一個拿商品資料，一個拿庫存資料
+            const [productResponse, stockResponse] = await Promise.all([
+                fetch('/products.json'),
+                fetch('/.netlify/functions/query-stock')
+            ]);
+
+            if (!productResponse.ok) throw new Error(`無法讀取商品資料`);
+            if (!stockResponse.ok) throw new Error(`無法讀取庫存資料`);
+
+            const products = await productResponse.json();
+            const stockData = await stockResponse.json();
+            
+            // 將商品和庫存資料一起傳入，產生卡片
+            productGrid.innerHTML = products.map(product => createProductCard(product, stockData)).join('');
+
+            // ... 後續的篩選按鈕邏輯維持不變 ...
+            const coffeeCards = document.querySelectorAll('.coffee-card');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const filter = button.dataset.filter;
+                    coffeeCards.forEach(card => {
+                        const category = card.dataset.category;
+                        if (filter === 'all' || (category && category.includes(filter))) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+
+        } catch (error) {
+            console.error('載入商品時發生錯誤:', error);
+            productGrid.innerHTML = `<p class="col-span-full text-center text-red-500">${error.message}，請稍後再試。</p>`;
+        }
+    }
+
+    initializeShop();
 });
-    </script>
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // --- 變數宣告 ---
