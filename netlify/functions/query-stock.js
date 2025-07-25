@@ -1,4 +1,3 @@
-// netlify/functions/query-stock.js
 const fetch = require('node-fetch');
 
 exports.handler = async function (event, context) {
@@ -13,9 +12,8 @@ exports.handler = async function (event, context) {
     const status = resp.status;
     const statusText = resp.statusText;
     const contentType = resp.headers.get('content-type') || '';
-    const text = await resp.text(); // 先用 text() 拿原始字串
+    const text = await resp.text(); // 先拿字串
 
-    // 先把狀態、Content-Type、前 500 個字印出來，幫助我們判斷
     console.log('n8n response status:', status, statusText);
     console.log('n8n content-type:', contentType);
     console.log('n8n raw text (first 500 chars):', text.slice(0, 500));
@@ -24,36 +22,40 @@ exports.handler = async function (event, context) {
       throw new Error(`n8n 回傳非 200：${status} ${statusText}`);
     }
 
-    // 嘗試把 text 轉成 JSON
     let raw;
     try {
       raw = JSON.parse(text);
     } catch (e) {
-      // 如果不是合法 JSON，就直接丟錯，並把 text 印在上面讓我們知道長什麼樣
       throw new Error('n8n 回傳不是合法 JSON，請檢查 n8n Respond to Webhook 設定');
     }
 
-    // 允許兩種格式：
-    // A) raw = [{ SKU: "...", stock: 0 }, ...]
-    // B) raw = { data: "[{ \"SKU\": \"...\", \"stock\": 0 }, ...]" }
+    // ====== 關鍵：把所有我們可能遇到的型態都吃下來 ======
     let list;
 
     if (Array.isArray(raw)) {
+      // 1) 直接是陣列
       list = raw;
+    } else if (raw && raw.SKU !== undefined) {
+      // 2) 你現在的情況：單一物件
+      list = [raw];
     } else if (raw && typeof raw.data === 'string') {
+      // 3) { data: "JSON字串" }
       list = JSON.parse(raw.data);
     } else if (raw && Array.isArray(raw.data)) {
-      list = raw.data; // 有些人會直接回 { data: [ ... ] }
+      // 4) { data: [ ... ] }
+      list = raw.data;
     } else if (raw && raw.json && Array.isArray(raw.json)) {
-      // n8n 有時候會回 { json: [ ... ] }
+      // 5) { json: [ ... ] }
       list = raw.json;
+    } else if (raw && Array.isArray(raw.items)) {
+      // 6) { items: [ { json: {...} }, ... ] } 之類
+      list = raw.items.map(i => i.json || i);
     } else {
-      throw new Error('無法辨識 n8n 回傳的資料格式（不是陣列，也不是 { data: ... }）');
+      throw new Error('無法辨識 n8n 回傳的資料格式（不是陣列、不是單一物件、也不是 { data: ... }）');
     }
 
     // 轉成 { SKU: stock } 對照表
     const stockMap = list.reduce((acc, item) => {
-      // 兼容 n8n 常見的 { json: {...} } 包法
       const row = item.json ? item.json : item;
       if (row && row.SKU) {
         acc[row.SKU] = Number(row.stock) || 0;
