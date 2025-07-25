@@ -1,27 +1,32 @@
-// 檔案路徑: netlify/functions/payment-result.js
+// 檔案路徑: netlify/functions/payment-result.js (智慧判斷版)
 
 exports.handler = async function(event, context) {
-  // 只處理來自綠界的 POST 請求
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   try {
-    // 解析綠界 POST 過來的表單資料
     const params = new URLSearchParams(event.body);
+    const rtnCode = params.get('RtnCode');
     const orderNumber = params.get('MerchantTradeNo');
-
-    // 取得網站的根網址
     const siteUrl = process.env.URL;
 
-    // 準備要重新導向的、帶有訂單編號的感謝頁面網址
-    const thankYouUrl = `${siteUrl}/coffee/thankyou.html?order=${orderNumber}`;
+    let redirectUrl;
 
-    // 回傳 302 Redirect 指令，讓瀏覽器跳轉到上面的網址
+    // 【重要】判斷付款是否成功
+    if (rtnCode === '1') {
+      // 付款成功，導向感謝頁面
+      redirectUrl = `${siteUrl}/coffee/thankyou.html?order=${orderNumber}`;
+    } else {
+      // 付款失敗或取消，導向失敗頁面
+      redirectUrl = `${siteUrl}/coffee/payment-failure.html`;
+    }
+
+    // 回傳 302 Redirect 指令，讓瀏覽器跳轉到對應的網址
     return {
       statusCode: 302,
       headers: {
-        Location: thankYouUrl,
+        Location: redirectUrl,
       },
     };
   } catch (error) {
