@@ -37,7 +37,9 @@
             } else {
                 orderNumberEl.textContent = '查無訂單編號';
             }
-        });
+         localStorage.removeItem('bamboo_cart');
+    localStorage.removeItem('selectedStore');
+});
     </script>
 </body>
 </html>
