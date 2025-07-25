@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>資料處理中...</title>
+</head>
+<body>
+    <p>正在將門市資料儲存至您的訂單，請稍候...</p>
+    <script>
+        window.onload = function () {
+            // 從網址列獲取所有參數
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // 將參數轉換為一個物件
+            const storeData = Object.fromEntries(urlParams.entries());
+            
+            // 檢查是否有收到門市 ID
+            if (storeData.CVSStoreID) {
+                console.log('map-reply.html 收到門市資料:', storeData);
+                // 將整個門市資料物件存入 localStorage，讓結帳頁面可以讀取
+                localStorage.setItem('ecpayStoreSelected', JSON.stringify(storeData));
+            } else {
+                console.error('map-reply.html 未能從網址獲取門市資料。');
+            }
+            
+            // 無論成功與否，都關閉這個彈出視窗
+            window.close();
+        };
+    </script>
+</body>
+</html>

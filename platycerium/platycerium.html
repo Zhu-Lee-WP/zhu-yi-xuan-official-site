@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>竹意軒的鹿角蕨小百科 | Platycerium Interactive Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+        }
+        .hero-section {
+            background-image: url('https://images.unsplash.com/photo-1620187431913-21e1a2f6432b?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+        }
+        .tab-btn {
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn.active {
+            border-bottom-color: #198754; /* Bootstrap Green */
+            color: #198754;
+            font-weight: 700;
+        }
+        .card-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .species-card {
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+        .species-card.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            display: none;
+        }
+        /* Fallback for image errors */
+        img[alt] {
+        img[alt] {
+            text-align: center;
+            line-height: 14rem;
+            background-color: #e9ecef;
+            color: #6c7d6e;
+            font-size: 0.875rem;
+        }
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+    <nav class="container mx-auto px-6 py-3">
+        <div class="flex justify-between items-center">
+            <div class="text-xl font-bold text-gray-800">
+                <span class="text-green-700">P.</span> 竹意軒的鹿角蕨小百科
+            </div>
+            <div class="md:hidden">
+                <button id="menu-btn" type="button" class="text-gray-600 hover:text-green-700 focus:outline-none">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+                    </svg>
+                </button>
+            </div>
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="index.html" class="text-green-800 hover:text-green-600 font-bold border-r border-gray-300 pr-8">返回首頁</a>
+                <a href="#about" class="text-gray-600 hover:text-green-700">關於鹿角蕨</a>
+                <a href="#morphology" class="text-gray-600 hover:text-green-700">獨特形態</a>
+                <a href="#species" class="text-gray-600 hover:text-green-700">探索物種</a>
+                <a href="#care" class="text-gray-600 hover:text-green-700">栽培指南</a>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden mt-4">
+            <a href="index.html" class="block py-2 font-bold text-green-800 hover:text-green-600">返回首頁</a>
+            <a href="#about" class="block py-2 text-gray-600 hover:text-green-700">關於鹿角蕨</a>
+            <a href="#morphology" class="block py-2 text-gray-600 hover:text-green-700">獨特形態</a>
+            <a href="#species" class="block py-2 text-gray-600 hover:text-green-700">探索物種</a>
+            <a href="#care" class="block py-2 text-gray-600 hover:text-green-700">栽培指南</a>
+        </div>
+    </nav>
+</header>
+
+    <section class="h-auto md:h-[22.5vh] flex flex-col md:flex-row text-gray-800">
+        <div class="w-full md:w-[2.5%] bg-green-900 flex items-center justify-center p-8">
+        </div>
+
+        <div class="w-full md:w-[15%] bg-lime-50 flex items-center justify-center p-4">
+            <img src="images/New logo.png" alt="品牌Logo" class="w-[80%] md:w-full h-auto mx-auto md:mx-0">
+        </div>
+        
+       <div class="w-full md:w-[82.5%] flex items-center justify-center p-8 relative text-white bg-cover bg-center" style="background-image: url('images/P1270044.jpg');">
+
+    <div class="absolute inset-0 bg-black/60"></div>
+    <div class="text-center relative">
+        <h1 class="text-4xl md:text-5xl font-bold mb-4 tracking-wider">探索鹿角蕨的多樣世界</h1>
+        <p class="text-xl md:text-xl max-w-l mx-auto">來自熱帶雨林的附生植物，有如藝術品般的姿態</p>
+    </div>
+
+</div>
+    </section>
+
+    <main class="container mx-auto px-6 py-12 md:py-20">
+
+        <section id="about" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-gray-800">什麼是鹿角蕨？</h2>
+            <p class="text-center text-gray-500 mb-10">森林中懸掛的綠色王者</p>
+            <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                <div class="md:w-1/2 flex justify-center md:justify-end">
+                    <img src="images/main-1.JPG" alt="植於木樁的亞猴鹿角蕨" class="rounded-lg shadow-lg w-[80%] h-auto object-cover">
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="max-w-md">
+                        <p class="text-xl mb-4 text-gray-700">鹿角蕨（學名：<span class="italic">Platycerium</span>）是一種「附生」蕨類植物，學名源於希臘語「platys」（寬闊）和「keras」（角），描述它們狀似鹿角的葉片形態。
+                        </p>
+                        <p class="text-xl mb-4 text-gray-700">在自然界中鹿角蕨通常附生在樹木的枝幹上生長。透過營養葉，來收集雨水、落葉與環境資源，作為自己的養分來源。
+                        </p>
+                        <p class="text-lg text-gray-600">具18個原生物種，廣泛分布於熱帶與亞熱帶地區，如東南亞、澳洲與非洲(美洲則有一個物種)，是雨林生態系中一道迷人的風景。
+                        </p>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+        <section id="morphology" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-gray-800">兩種型態的葉片</h2>
+            <p class="text-center text-gray-500 mb-10">各司其職，缺一不可</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+                <div class="bg-white p-8 rounded-lg shadow-md card-hover flex flex-col items-center text-center">
+                    <div class="w-24 h-24 mb-4 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-green-800">營養葉 (臉)</h3>
+                    <p class="text-gray-600">
+                        又稱為「盾狀葉」。它們是不會產生孢子的葉片，像盾牌一樣平貼在樹幹上，保護根系。重要的是，它向上伸展的葉冠能有效地接住落葉、雨水，打造一個蒐集養分與水分的「資源巢」。
+                    </p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md card-hover flex flex-col items-center text-center">
+                    <div class="w-24 h-24 mb-4 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wheat-icon lucide-wheat"><path d="M2 22 16 8"/><path d="M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/><path d="M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/><path d="M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/><path d="M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"/><path d="M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"/><path d="M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"/><path d="M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-3 text-green-800">孢子葉 (手)</h3>
+                    <p class="text-gray-600">
+                        又稱為「繁殖葉」。這些是我們最熟悉、形似鹿角的葉片。它們的主要功能是進行繁殖，葉片成熟時背面會產生褐色的孢子囊群，裡面有數以萬計的孢子，用以繁衍後代。優雅下垂的姿態，也是鹿角蕨最具觀賞性的部分。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <section id="species" class="mb-16 md:mb-24 scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-gray-800">竹意軒的鹿角蕨蒐藏</h2>
+            <p class="text-center text-gray-500 mb-10">點擊下方標籤，可以篩選所屬的類群</p>
+            
+            <div class="flex flex-wrap justify-center border-b mb-8 gap-2 md:gap-0">
+                <button class="tab-btn px-4 py-2 text-base md:text-lg active" data-filter="all">所有品種 </button>
+                <button class="tab-btn px-4 py-2 text-base md:text-lg" data-filter="high-shield">高冠系列 </button>
+                <button class="tab-btn px-4 py-2 text-base md:text-lg" data-filter="classic-variety">經典雋永 </button>
+                <button class="tab-btn px-4 py-2 text-base md:text-lg" data-filter="wide-hands">寬手系列 </button>
+                <button class="tab-btn px-4 py-2 text-base md:text-lg" data-filter="specially-variety">特色獨具 </button>
+            </div>
+
+            <div id="species-grid" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="high-shield classic-variety">
+                    <img src="images/AKKI.jpg" alt="Akki鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">Akki</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. veitchii <span class="not-italic">"Akki"</span></p>
+                        <p class="text-gray-600 text-sm">成熟表現冠高，型態狂暴粗曠，光線充足時也會向上升生長，栽培性佳，是喜歡高冠品種的必收款</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="high-shield">
+                    <img src="images/AR1-2.jpg" alt="奧銀鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">奧銀鹿角蕨 AR-1</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. vetichii <span class="not-italic">"AR-1"</span></p>
+                        <p class="text-gray-600 text-sm">自選個體，奧銀鹿角蕨之孢子苗，具有細尖的高冠，相當迷人。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="high-shield">
+                    <img src="images/Hela-2.jpg" alt="海拉鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">海拉鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Hela"</span></p>
+                        <p class="text-gray-600 text-sm">成熟時冠部極度高聳，孢子葉呈下垂貌，爪哇與銀鹿檸檬交種個體</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="high-shield classic-variety">
+                    <img src="images/Monkey North 2.jpg" alt="北猴鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">北猴鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Monkey North"</span></p>
+                        <p class="text-gray-600 text-sm">奧銀與爪哇交種的經典個體。兼具親本兩者特色：高冠、白絨毛以及下墜的孢子葉</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="high-shield">
+                    <img src="images/White Monkey 2.jpg" alt="白猴鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">白猴鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Monkey North"</span></p>
+                        <p class="text-gray-600 text-sm">奧銀與爪哇交種的個體。兼具親本兩者特色：高冠、白絨毛以及下墜的孢子葉，是該系列較後續發表的個體</p>
+                    </div>
+                </div>
+                 <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="high-shield">
+                    <img src="images/Wild Monkey 3.jpg" alt="野猴鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">野猴鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Monkey North"</span></p>
+                        <p class="text-gray-600 text-sm">奧銀與爪哇交種的個體。兼具親本兩者特色：高冠、白絨毛以及下墜的孢子葉，此個體的冠部較為高聳</p>
+                    </div>
+                </div>
+
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="classic-variety specially-variety">
+                    <img src="images/FoongSiQi 2.jpg" alt="馮詩齊 捲捲鹿" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">捲捲鹿</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Foong Si Qi"</span></p>
+                        <p class="text-gray-600 text-sm">極具特色的鹿角蕨品種，成熟時孢子囊處葉片會捲曲，相當有辨識度。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="classic-variety">
+                    <img src="images/S S Foong 4.jpg" alt="S. S. Foong" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">S. S. Foong</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"S. S. Foong"</span></p>
+                        <p class="text-gray-600 text-sm">栽培過程中隨著植株的成熟，孢子葉的分岔數越來越多且密集，亦有千手觀音之稱的組培苗</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="classic-variety">
+                    <img src="images/Paul Vespa4.jpg" alt="保羅偉士牌" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">保羅偉士牌鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Paul Vespa"</span> </p>
+                        <p class="text-gray-600 text-sm">DW交種系列下的品種，葉片白皙且對稱性佳，栽培性也很好。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="classic-variety">
+                    <img src="images/Wild cat.jpg" alt="野貓鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">爪哇鹿角蕨"野貓"</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. willinckii <span class="not-italic">"Wild Cat"</span></p>
+                        <p class="text-gray-600 text-sm">爪哇鹿角蕨的個體，孢子葉白且形態張揚，具有一定的辨識度。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="classic-variety">
+                    <img src="images/Full Moon3.jpg" alt="滿月鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">滿月鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Full Moon"</span></p>
+                        <p class="text-gray-600 text-sm">DW交種，月亮系列的鹿角蕨，孢子葉有獨特的蠟質感，相當有辨識度。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="classic-variety specially-variety">
+                    <img src="images/Elsa.jpg" alt="艾莎鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">艾莎鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Elsa"</span></p>
+                        <p class="text-gray-600 text-sm">葉片絨毛表現極佳，成熟時分岔性好，給予適當光照時，葉片短且密集，相當漂亮</p>
+                    </div>
+                </div>
+
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="wide-hands">
+                    <img src="images/Jynx-2.jpg" alt="迷唇姐鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">迷唇姐鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Jynx"</span></p>
+                        <p class="text-gray-600 text-sm">葉片胖寬，整體體型適中，可愛的品種。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="wide-hands">
+                    <img src="images/Montain Rabbit2.jpg" alt="山兔鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">山兔鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Mountain Rabbit"</span></p>
+                        <p class="text-gray-600 text-sm">大型單芽種，營養葉高聳，孢子葉僅有一對孢子囊群斑塊，氣勢雄偉。</p>
+                    </div>
+                </div>
+                 <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="wide-hands">
+                    <img src="images/Rimklong sporeling.jpg" alt="Rimklong" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">Rimklong sporeling</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. hillii <span class="not-italic">"Rimklong" sporeling</span></p>
+                        <p class="text-gray-600 text-sm">Rimklong為深綠鹿角蕨的個體，特色是孢子葉具綴化感，另外白毛也濃密。此株為孢子苗</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="wide-hands">
+                    <img src="images/Blue Moon 2.jpg" alt="藍月鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">藍月鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Blue Moon"</span></p>
+                        <p class="text-gray-600 text-sm">DW交種中的月亮系列，葉胖寬，成熟時葉片具藍綠色之質感。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="wide-hands">
+                    <img src="images/Honey Moon.jpg" alt="蜜月鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">蜜月鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Honey Moon"</p>
+                        <p class="text-gray-600 text-sm">DW交種中的月亮系列，葉基部較寬而逐漸縮窄，葉片葉色為蘋果綠色。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="wide-hands">
+                    <img src="images/Mt. Lewis sporing.jpg" alt="貓路易士鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">貓路易士鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. bifurcatum Mt. Luis <span class="not-italic">sporeling</p>
+                        <p class="text-gray-600 text-sm">貓路易士鹿角蕨孢子苗，具寬葉片。</p>
+                    </div>
+                </div>
+
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="specially-variety">
+                    <img src="images/Blue Monkey3.jpg" alt="藍猴鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">藍猴鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Blue Monkey"</p>
+                        <p class="text-gray-600 text-sm">DW系列的交種，特色為孢子葉成熟時具有藍綠色質感，並且有明顯的葉脈紋路。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="specially-variety">
+                    <img src="images/White Hill 3.jpg" alt="白色山丘鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">白色山丘鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"White Hill"</p>
+                        <p class="text-gray-600 text-sm">孢子葉呈瀑布狀的下墜，排列密集，並且具有濃密的白色絨毛。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="specially-variety">
+                    <img src="images/Albo Anubis.jpg" alt="白胡狼鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">爪哇鹿角蕨"白胡狼"</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. willinckii<span class="not-italic">"Albo Anubis"</p>
+                        <p class="text-gray-600 text-sm">爪哇鹿角蕨的個體，葉片極其細緻。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="specially-variety">
+                    <img src="images/Cold Moon.jpg" alt="冷月鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">爪哇鹿角蕨"冷月"</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. willinckii<span class="not-italic">"Cold Moon"</p>
+                        <p class="text-gray-600 text-sm">爪哇鹿角蕨的個體，孢子葉細緻而營養葉寬胖。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="specially-variety">
+                    <img src="images/Gorgon.jpg" alt="Gorgon鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">圓盾鹿角蕨"Gorgon"</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. alcicorne<span class="not-italic">"Gorgon"</p>
+                        <p class="text-gray-600 text-sm">圓盾鹿角蕨的個體，孢子葉成熟時葉緣會有波浪狀的質感。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="specially-variety">
+                    <img src="images/Little Will 2.jpg" alt="Little Will" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">侏儒爪哇鹿角蕨"Little Will"</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. willinckii<span class="not-italic">"Little Will"</p>
+                        <p class="text-gray-600 text-sm">爪哇鹿角蕨的個體，體型為侏儒尺寸，相當小，是可以露養的侏儒鹿角蕨。</p>
+                    </div>
+                </div>
+                
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="">
+                    <img src="images/A+.jpg" alt="A+鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">爪哇鹿角蕨"A+"</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. willinckii <span class="not-italic">"A+"</p>
+                        <p class="text-gray-600 text-sm">爪哇鹿角蕨的個體，白皙且排列密集，體型中型。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="">
+                    <img src="images/Doi Tung 3.jpg" alt="Doi Tung" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">杜藤鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"Doi Tung"</p>
+                        <p class="text-gray-600 text-sm">光線足夠時，葉片會往上生長，短且具氣勢。</p>
+                    </div>
+                </div>
+                 <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="">
+                    <img src="images/Mt. Lewis thin 2.jpg" alt="貓路易士鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">細葉貓路易士鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. bifurcatum Mt. Luis <span class="not-italic">"Thin"</p>
+                        <p class="text-gray-600 text-sm">貓路易士鹿角蕨個體，具細緻孢子葉片。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="">
+                    <img src="images/P1270493.JPG" alt="亞洲猴腦鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">亞洲猴腦鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. ridleyi</p>
+                        <p class="text-gray-600 text-sm">營養葉有著如大腦般深刻的紋路，孢子葉直立向上，栽培難度較高。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="">
+                    <img src="images/White Wing.jpg" alt="白翼鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">白翼鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. <span class="not-italic">"White Wing"</p>
+                        <p class="text-gray-600 text-sm">孢子葉白皙，葉脈紋路明顯，成熟時葉尾具密集分岔。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="">
+                    <img src="images/willinckii Mr.Tin 2.jpg" alt="Mr. Tin" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">爪哇鹿角蕨"Mr. Tin"</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. willinckii<span class="not-italic">"Mr. Tin"</p>
+                        <p class="text-gray-600 text-sm">爪哇鹿角蕨個體，具白皙且細緻的流線孢子葉。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="malay-asia">
+                    <img src="https://placehold.co/600x400/ef4444/ffffff?text=P.+wallichii" alt="蝴蝶鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">蝴蝶鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. wallichii</p>
+                        <p class="text-gray-600 text-sm">孢子葉寬大如蝶翼，有季節性休眠特性，栽培難度高，是收藏家的目標。</p>
+                    </div>
+                </div>
+                <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="malay-asia">
+                    <img src="images/wandae.jpg" alt="女王鹿角蕨 (圖片待補)" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">女王鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. wandae</p>
+                        <p class="text-gray-600 text-sm">體型最巨大的鹿角蕨，營養葉冠可達2公尺，葉緣有尖銳的深裂，氣勢如女王般。</p>
+                    </div>
+                </div>
+                 <div class="species-card bg-white rounded-lg shadow-md overflow-hidden card-hover" data-group="all">
+                    <img src="images/elephantotis.jpg" alt="象耳鹿角蕨" class="w-full h-84 object-cover">
+                    <div class="p-5">
+                        <h3 class="text-xl font-bold text-gray-800">象耳鹿角蕨</h3>
+                        <p class="text-sm italic text-gray-500 mb-2">P. elephantotis</p>
+                        <p class="text-gray-600 text-sm">孢子葉寬大、不下垂，形似象耳而得名。營養葉邊緣呈波浪狀，極具特色。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="care" class="scroll-mt-20">
+            <h2 class="text-3xl font-bold text-center mb-2 text-gray-800">栽培與繁殖指南</h2>
+            <p class="text-center text-gray-500 mb-10">讓鹿角蕨在家中茁壯成長</p>
+            <div class="bg-white rounded-lg shadow-lg p-8 md:p-12">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4 text-green-800">基礎栽培四要素</h3>
+                        <ul class="space-y-4">
+                            <li class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-yellow-500 mr-3 mt-1 flex-shrink-0"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10z"/></svg>
+                                <div>
+                                    <h4 class="font-semibold">光照</h4>
+                                    <p class="text-gray-600">喜歡明亮的散射光，避免夏季陽光直射，以免葉片曬傷。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-500 mr-3 mt-1 flex-shrink-0"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></svg>
+                                <div>
+                                    <h4 class="font-semibold">水分</h4>
+                                    <p class="text-gray-600">介質（水苔）摸起來微乾時再澆水。澆水要澆透，直到水苔完全濕潤。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500 mr-3 mt-1 flex-shrink-0"><path d="M14 4v10.54a4 4 0 1 1-4 0V4a2 2 0 0 1 4 0Z"/></svg>
+                                <div>
+                                    <h4 class="font-semibold">溫度與濕度</h4>
+                                    <p class="text-gray-600">最適溫暖濕潤的環境 (20-30°C)。空氣乾燥時可向植株周圍噴霧。</p>
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-purple-500 mr-3 mt-1 flex-shrink-0"><path d="M12.8 19.6A2 2 0 1 0 14 16H2"/><path d="M17.5 8a2.5 2.5 0 1 1 2 4H2"/><path d="M9.8 4.4A2 2 0 1 1 11 8H2"/></svg>
+                                <div>
+                                    <h4 class="font-semibold">通風</h4>
+                                    <p class="text-gray-600">良好的空氣流通可以預防病害，室內養殖時要特別留意。</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4 text-green-800">如何繁殖？</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <h4 class="font-semibold text-lg">分株繁殖</h4>
+                                <p class="text-gray-600">最簡單的方式。對於會長側芽的「多芽型」品種，當側芽長到一定大小後(建議至少手掌大小)，小心地將其從母株上切下，上盆或是上板即可。</p>
+                            </div>
+                            <div>
+                                <h4 class="font-semibold text-lg">孢子繁殖</h4>
+                                <p class="text-gray-600">較為挑戰與趣味的方式。收集成熟的孢子，均勻撒在濕潤的無菌介質上，保持濕潤與明亮光線，耐心等待，就有機會看見微小的配子體萌發。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+       <section id="connect" class="bg-white py-16 md:py-24">
+    <div class="container mx-auto px-6">
+        
+        <div class="text-center mb-12">
+            <h2 class="text-3xl font-bold text-gray-800">與我們互動</h2>
+            <p class="text-gray-500 mt-2">關注我們的最新動態，或將您的任何想法、建議與回饋告訴我們！</p>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-12 lg:gap-16 items-start">
+
+            <div class="w-full md:w-1/2">
+                
+                <div class="mb-10 text-center">
+                    <h3 class="text-xl font-bold text-gray-700 mb-4">追蹤我們的社群</h3>
+                    <div class="flex justify-center gap-6">
+                        <a href="https://www.facebook.com/bamboocoffeestudio" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-green-700 transition-colors">
+                            <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v2.385z"/></svg>
+                        </a>
+                        <a href="https://www.instagram.com/bamboo_gabe/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-green-700 transition-colors">
+                             <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.85s-.011 3.584-.069 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07s-3.584-.012-4.85-.07c-3.252-.148-4.771-1.691-4.919-4.919-.058-1.265-.069-1.645-.069-4.85s.011-3.584.069-4.85c.149-3.225 1.664 4.771 4.919-4.919 1.266.058 1.644.07 4.85.07zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948s.014 3.667.072 4.947c.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072s3.667-.014 4.947-.072c4.358-.2 6.78-2.618 6.98-6.98.059-1.281.073-1.689.073-4.948s-.014-3.667-.072-4.947c-.2-4.358-2.618-6.78-6.98-6.98-1.281-.059-1.689-.073-4.948-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.162 6.162 6.162 6.162-2.759 6.162-6.162-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4s1.791-4 4-4 4 1.79 4 4-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44 1.441-.645 1.441-1.44-.645-1.44-1.441-1.44z"/></svg>
+                        </a>
+                        <a href="https://youtube.com/@bonsairecording?si=0vsuKiWxxalxdPBf" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-green-700 transition-colors">
+                            <svg class="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+                        </a>
+                        <a href="https://page.line.me/470ojyrk" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-green-700 transition-colors">
+                            <svg class="w-8 h-8" viewBox="0 0 32 32" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <text x="50%" y="50%" dominant-baseline="central" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="bold">LINE</text>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+                <div>
+    <h3 class="text-xl font-bold text-gray-700 mb-4">意見回饋</h3>
+    <form id="feedback-form" action="https://BambooLee-n8n-free.hf.space/webhook/46a669a0-bd7b-47ff-9f2b-28731ff615f2" method="POST">
+        <div class="mb-4">
+            <label for="name" class="block text-gray-700 text-sm font-bold mb-2 text-left">您的稱呼：</label>
+            <input type="text" id="name" name="name" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+
+        <div class="mb-4">
+            <label for="email" class="block text-gray-700 text-sm font-bold mb-2 text-left">您的信箱 (非必填)：</label>
+            <input type="email" id="email" name="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+        </div>
+        <div class="mb-6">
+            <label for="feedback" class="block text-gray-700 text-sm font-bold mb-2 text-left">您的建議、回饋或詢問：</label>
+            <textarea id="feedback" name="feedback" rows="4" required class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"></textarea>
+        </div>
+        <div class="flex items-center justify-start">
+            <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-6 rounded focus:outline-none focus:shadow-outline transition-colors">
+                提交
+            </button>
+        </div>
+    </form>
+</div>
+            </div>
+
+            <div class="w-full md:w-1/2">
+                <div class="grid grid-cols-2 gap-4">
+                    <img src="images/ZHUYIXUAN.jpg" alt="竹意軒照片" class="rounded-lg shadow-md aspect-[4/3] object-cover hover:scale-105 transition-transform duration-300">
+                    <img src="images/捲捲手.jpg" alt="捲捲鹿孢子手" class="rounded-lg shadow-md aspect-[4/3] object-cover hover:scale-105 transition-transform duration-300">
+                    <img src="images/非洲菫.jpg" alt="非洲菫" class="rounded-lg shadow-md aspect-[4/3] object-cover hover:scale-105 transition-transform duration-300">
+                    <img src="images/光山.jpg" alt="光山" class="rounded-lg shadow-md aspect-[4/3] object-cover hover:scale-105 transition-transform duration-300">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-6 text-center">
+            <p>&copy; 2025 竹意軒的鹿角蕨小百科. All Rights Reserved.</p>
+            <p class="text-sm text-gray-400 mt-2">為教育與推廣目的而建構的互動式網頁。</p>
+            <p class="text-sm text-gray-400 mt-4">
+                本頁瀏覽人次：<span id="view-counter" class="font-bold">載入中...</span>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab-btn');
+            const speciesCards = document.querySelectorAll('.species-card');
+
+            // --- NEW: Hamburger Menu Toggle ---
+            const menuBtn = document.getElementById('menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            menuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            // --- END NEW ---
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Update active tab style
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+
+                    const filter = tab.dataset.filter;
+
+                    // Filter species cards
+                    speciesCards.forEach(card => {
+                        // We use a timeout to allow the CSS transition to be visible
+                        if (filter === 'all' || card.dataset.group.split(' ').includes(filter)) {
+                            setTimeout(() => {
+                                card.style.display = 'block';
+                                setTimeout(() => {
+                                    card.style.opacity = '1';
+                                    card.style.transform = 'scale(1)';
+                                }, 10);
+                            }, 0);
+                        } else {
+                            card.style.opacity = '0';
+                            card.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                card.style.display = 'none';
+                            }, 500); // Match transition duration
+                        }
+                    });
+                });
+            });
+            
+            // Smooth scrolling for anchor links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    // --- NEW: Close mobile menu on link click ---
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                    // --- END NEW ---
+
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
+            });
+
+            // Make all cards visible on load
+            speciesCards.forEach(card => {
+                card.style.display = 'block';
+                card.style.opacity = '1';
+                card.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+    <script>
+    // 等待整個網頁文件都載入完成後，再執行裡面的程式碼
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // 透過我們剛剛設定的 ID，找到表單元素
+        const form = document.getElementById('feedback-form');
+
+        // 為這個表單加上一個「提交」事件的監聽器
+        form.addEventListener('submit', function(event) {
+            
+            // 1. 阻止表單的預設提交行為 (也就是阻止頁面跳轉)
+            event.preventDefault();
+
+            // 2. 收集表單中的所有資料
+            const formData = new FormData(form);
+            const actionUrl = form.action;
+
+            // 3. 在背景發送資料到 n8n 的 Webhook 網址
+            fetch(actionUrl, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json()) // 解析 n8n 回傳的 JSON
+            .then(data => {
+                // 4. 發送成功後執行的事
+                console.log('Success:', data); // 在瀏覽器控制台印出成功訊息，方便除錯
+                alert('感謝您的回饋，我們已成功收到您的訊息！'); // 跳出成功視窗
+                form.reset(); // 清空表單欄位
+            })
+            .catch((error) => {
+                // 5. 如果發送失敗，跳出錯誤視窗
+                console.error('Error:', error);
+                alert('訊息傳送失敗，請稍後再試。');
+            });
+        });
+    });
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const el = document.getElementById('view-counter');
+  const namespace = 'bamboosite';     // 自訂，類似舊的「namespace」
+  const name      = 'main-page';      // 自訂，類似舊的「key」
+
+  try {
+    // 每次載入 +1 並回傳最新值
+    const res  = await fetch(`https://api.counterapi.dev/v1/ZueYiXuan-page/platycerium-page/up`);
+    const data = await res.json();        // 回傳格式：{ namespace, name, count }
+    el.textContent = data.count;
+  } catch (err) {
+    console.error('載入計數器失敗:', err);
+    el.textContent = '無法載入';
+  }
+});
+</script>
+
+</body>
+</html>

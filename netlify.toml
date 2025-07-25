@@ -1,0 +1,7 @@
+[build]
+  # 您的網站是純靜態 HTML，所以發布目錄就是根目錄 "."
+  publish = "."
+
+[functions]
+  # 告訴 Netlify 我們的後端函式放在哪個資料夾
+  directory = "netlify/functions"
