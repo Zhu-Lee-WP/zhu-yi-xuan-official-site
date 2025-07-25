@@ -462,19 +462,19 @@
         </div>
 
         <div class="p-4 border-t bg-gray-50">
-            <div class="flex justify-between items-center mb-4">
-                <span class="text-lg font-bold">小計：</span>
-                <span id="cart-total" class="text-2xl font-bold text-gray-800">NT$ 0</span>
-            </div>
-            <div class="space-y-3">
-                <button id="cvs-checkout-btn" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-4 rounded-lg transition-colors">
-                    超商取貨結帳
-                </button>
-                <button id="home-delivery-checkout-btn" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg transition-colors">
-                    郵寄宅配結帳
-                </button>
-            </div>
-        </div>
+    <div class="flex justify-between items-center mb-4">
+        <span class="text-lg font-bold">小計：</span>
+        <span id="cart-total" class="text-2xl font-bold text-gray-800">NT$ 0</span>
+    </div>
+    <div class="space-y-3">
+        <button id="cvs-checkout-btn" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+            超商取貨結帳
+        </button>
+        <button id="home-delivery-checkout-btn" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-3 px-4 rounded-lg transition-colors">
+            郵寄宅配結帳
+        </button>
+    </div>
+</div>
     </div>
 
     <!-- Footer / 頁尾 -->
@@ -542,72 +542,143 @@ document.addEventListener('DOMContentLoaded', function() {
     </script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
+    // --- 變數宣告 ---
+    const cartSidebar = document.getElementById('cart-sidebar');
+    const openCartButtons = document.querySelectorAll('#open-cart-btn');
+    const closeCartBtn = document.getElementById('close-cart-btn');
+    const cartItemsContainer = document.getElementById('cart-items');
+    const cartTotalEl = document.getElementById('cart-total');
+    const cartCountEls = document.querySelectorAll('#cart-count');
+    const menuCartDot = document.getElementById('menu-cart-dot');
     const productGrid = document.getElementById('product-grid');
-    const filterButtons = document.querySelectorAll('#filter-buttons .tab-btn');
+    // 【已加回】結帳按鈕
+    const cvsCheckoutBtn = document.getElementById('cvs-checkout-btn');
+    const homeDeliveryCheckoutBtn = document.getElementById('home-delivery-checkout-btn');
 
-    // 負責產生單一商品卡片 HTML 的函式
-// ▼▼▼ 請用這個新版本，完整替換掉舊的 createProductCard 函式 ▼▼▼
-function createProductCard(product) {
-    let specsHtml = '';
-    product.specs.forEach((spec, index) => {
-        const isChecked = index === 0 ? 'checked' : '';
-        specsHtml += `
-            <label class="flex items-center p-1 border rounded-lg cursor-pointer hover:bg-amber-50">
-                <input type="radio" name="spec_${product.id}" class="h-3 w-3 md:h-4 md:w-4 text-amber-600 border-gray-300 focus:ring-amber-500" value="${spec.id}" data-price="${spec.price}" data-spec-name="${spec.name}" ${isChecked}>
-                <div class="ml-2 text-gray-700 flex flex-col">
-                    <span class="font-semibold md:font-bold text-xs md:text-sm">${spec.name}</span>
-                    <span class="text-xs md:text-sm font-semibold text-gray-800 ml-1">NT$ ${spec.price}</span>
-                </div>
-            </label>
-        `;
+    let cart = JSON.parse(localStorage.getItem('bamboo_cart')) || [];
+
+    // --- 核心功能函式 ---
+    function saveCart() {
+        localStorage.setItem('bamboo_cart', JSON.stringify(cart));
+    }
+
+    function renderCartItems() {
+        if (!cartItemsContainer) return;
+        cartItemsContainer.innerHTML = '';
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<p class="text-gray-500">您的購物車是空的。</p>';
+            cartCountEls.forEach(el => el.classList.add('hidden'));
+            if (menuCartDot) menuCartDot.classList.add('hidden');
+            return;
+        }
+        let totalItems = 0;
+        cart.forEach(item => {
+            totalItems += item.quantity;
+            const itemEl = document.createElement('div');
+            itemEl.className = 'flex justify-between items-center mb-4 p-2 border-b';
+            itemEl.innerHTML = `
+                <div class="w-3/4"><p class="font-bold truncate">${item.name}</p><p class="text-sm text-gray-600">NT$ ${item.price} x ${item.quantity}</p></div>
+                <div class="w-1/4 text-right"><button class="remove-from-cart-btn text-red-500 hover:text-red-700 text-sm" data-id="${item.id}">移除</button></div>
+            `;
+            cartItemsContainer.appendChild(itemEl);
+        });
+        if (totalItems > 0) {
+            cartCountEls.forEach(el => { el.textContent = totalItems; el.classList.remove('hidden'); });
+            if (menuCartDot) { menuCartDot.classList.remove('hidden'); }
+        } else {
+            cartCountEls.forEach(el => el.classList.add('hidden'));
+            if (menuCartDot) { menuCartDot.classList.add('hidden'); }
+        }
+    }
+
+    function renderCartTotal() {
+        if (!cartTotalEl) return;
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        cartTotalEl.textContent = `NT$ ${total}`;
+    }
+    
+    function updateCart() {
+        renderCartItems();
+        renderCartTotal();
+        saveCart();
+    }
+
+    function addToCart(product) {
+        const existingItem = cart.find(item => item.id === product.id);
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cart.push({ ...product, quantity: 1 });
+        }
+        // 【已加回】提示訊息
+        alert(`「${product.name}」已加入購物車！`);
+        updateCart();
+    }
+
+    function removeFromCart(productId) {
+        cart = cart.filter(item => item.id !== productId);
+        updateCart();
+    }
+
+    // 【已加回】處理跳轉到結帳頁的共用函式
+    function proceedToCheckout(shippingMethod) {
+        if (cart.length === 0) {
+            alert('您的購物車是空的！');
+            return;
+        }
+        localStorage.setItem('shippingMethod', shippingMethod);
+        // 我們也需要再次儲存購物車，確保 checkout.html 能拿到最新的
+        localStorage.setItem('bamboo_cart', JSON.stringify(cart));
+        // 跳轉到結帳頁面
+        window.location.href = '/coffee/checkout.html';
+    }
+
+    // --- 事件監聽器設定 ---
+    openCartButtons.forEach(btn => {
+        btn.addEventListener('click', () => { if (cartSidebar) cartSidebar.classList.remove('translate-x-full'); });
     });
 
-    return `
-        <div class="coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}">
-            <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain">
-            
-            <div class="p-3 md:p-4 flex-grow flex flex-col">
-                <h3 class="text-sm md:text-base font-bold text-amber-800 mb-1">${product.name}</h3>
-                <p class="text-gray-600 text-xs md:text-sm leading-5 mb-2">${product.description}</p>
-                <div class="space-y-1">${specsHtml}</div>
-                
-                <div class="mt-auto pt-2">
-                    <button class="add-to-cart-btn w-full bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded-lg transition-colors duration-300 text-xs md:text-sm" data-name="${product.name}">加入購物車</button>
-                </div>
-            </div>
-        </div>
-    `;
-}
+    if (closeCartBtn) {
+        closeCartBtn.addEventListener('click', () => cartSidebar.classList.add('translate-x-full'));
+    }
 
-    // 主要的載入與篩選邏輯
-    async function initializeShop() {
-        // 1. 讀取 JSON 檔案
-        const response = await fetch('/products.json'); // 從根目錄讀取
-        const products = await response.json();
-        
-        // 2. 將商品渲染到畫面上
-        productGrid.innerHTML = products.map(createProductCard).join('');
-
-        // 3. 設定篩選按鈕的功能
-        const coffeeCards = document.querySelectorAll('.coffee-card');
-        filterButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                filterButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
-                const filter = button.dataset.filter;
-                coffeeCards.forEach(card => {
-                    const category = card.dataset.category;
-                    if (filter === 'all' || (category && category.includes(filter))) {
-                        card.style.display = 'flex';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
+    if (cartItemsContainer) {
+        cartItemsContainer.addEventListener('click', (event) => {
+            if (event.target && event.target.classList.contains('remove-from-cart-btn')) {
+                const productId = event.target.dataset.id;
+                removeFromCart(productId);
+            }
+        });
+    }
+    
+    if (productGrid) {
+        productGrid.addEventListener('click', (event) => {
+            const buttonEl = event.target.closest('.add-to-cart-btn');
+            if (!buttonEl) return;
+            const productCard = buttonEl.closest('.coffee-card');
+            const productIdBase = productCard.dataset.productId;
+            const productName = buttonEl.dataset.name;
+            const selectedSpecEl = productCard.querySelector(`input[name="spec_${productIdBase}"]:checked`);
+            if (!selectedSpecEl) { alert('請選擇一個商品規格！'); return; }
+            const specValue = selectedSpecEl.value;
+            const specName = selectedSpecEl.dataset.specName;
+            const price = parseInt(selectedSpecEl.dataset.price, 10);
+            const uniqueProductId = `${productIdBase}_${specValue}`;
+            const product = { id: uniqueProductId, name: `${productName} (${specName})`, price: price };
+            addToCart(product);
         });
     }
 
-    initializeShop();
+    // 【已加回】綁定兩個結帳按鈕的事件
+    if (cvsCheckoutBtn) {
+        cvsCheckoutBtn.addEventListener('click', () => proceedToCheckout('CVS'));
+    }
+    if (homeDeliveryCheckoutBtn) {
+        homeDeliveryCheckoutBtn.addEventListener('click', () => proceedToCheckout('HOME_DELIVERY'));
+    }
+
+    // --- 初始載入 ---
+    updateCart();
 });
 </script>
 
