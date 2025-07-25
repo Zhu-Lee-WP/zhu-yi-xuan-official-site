@@ -493,101 +493,11 @@
         </div>
     </footer>
 
-    <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const productGrid = document.getElementById('product-grid');
-    const filterButtons = document.querySelectorAll('#filter-buttons .tab-btn');
-
-    // 【已修改】函式現在會接收一個 stockData 參數
-    function createProductCard(product, stockData = {}) {
-        let specsHtml = '';
-        product.specs.forEach((spec, index) => {
-            const isChecked = index === 0 ? 'checked' : '';
-            const sku = `${product.id}_${spec.id}`;
-            const stock = stockData[sku] !== undefined ? parseInt(stockData[sku], 10) : 'N/A'; // 從庫存資料中取得庫存
-            const isOutOfStock = stock <= 0;
-
-            specsHtml += `
-                <label class="flex items-center p-1 border rounded-lg cursor-pointer ${isOutOfStock ? 'opacity-50 bg-gray-100' : 'hover:bg-amber-50'}">
-                    <input type="radio" name="spec_${product.id}" class="h-3 w-3 md:h-4 md:w-4 text-amber-600 border-gray-300 focus:ring-amber-500" value="${spec.id}" data-price="${spec.price}" data-spec-name="${spec.name}" ${isChecked} ${isOutOfStock ? 'disabled' : ''}>
-                    <div class="ml-2 text-gray-700 flex flex-col">
-                        <span class="font-semibold md:font-bold text-xs md:text-sm">${spec.name} ${isOutOfStock ? '(售完)' : ''}</span>
-                        <span class="text-xs md:text-sm font-semibold text-gray-800 ml-1">NT$ ${spec.price}</span>
-                    </div>
-                </label>
-            `;
-        });
-
-        // 檢查整個商品的所有規格是否都已售完
-        const allSpecsOutOfStock = product.specs.every(spec => {
-            const sku = `${product.id}_${spec.id}`;
-            return stockData[sku] !== undefined && parseInt(stockData[sku], 10) <= 0;
-        });
-
-        const buttonHtml = allSpecsOutOfStock
-            ? `<button class="w-full bg-gray-400 text-white font-bold py-1.5 px-2 rounded-lg cursor-not-allowed" disabled>庫存不足</button>`
-            : `<button class="add-to-cart-btn w-full bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded-lg transition-colors duration-300 text-xs md:text-sm" data-name="${product.name}">加入購物車</button>`;
-
-        return `
-            <div class="coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}">
-                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain">
-                <div class="p-3 md:p-4 flex-grow flex flex-col">
-                    <h3 class="text-sm md:text-base font-bold text-amber-800 mb-1 h-14 md:h-16">${product.name}</h3>
-                    <p class="text-gray-600 text-xs md:text-sm leading-5 mb-2">${product.description}</p>
-                    <div class="space-y-1">${specsHtml}</div>
-                    <div class="mt-auto pt-2">${buttonHtml}</div>
-                </div>
-            </div>
-        `;
-    }
-
-    async function initializeShop() {
-        try {
-            // 【新】同時發出兩個請求：一個拿商品資料，一個拿庫存資料
-            const [productResponse, stockResponse] = await Promise.all([
-                fetch('/products.json'),
-                fetch('/.netlify/functions/query-stock')
-            ]);
-
-            if (!productResponse.ok) throw new Error(`無法讀取商品資料`);
-            if (!stockResponse.ok) throw new Error(`無法讀取庫存資料`);
-
-            const products = await productResponse.json();
-            const stockData = await stockResponse.json();
-            
-            // 將商品和庫存資料一起傳入，產生卡片
-            productGrid.innerHTML = products.map(product => createProductCard(product, stockData)).join('');
-
-            // ... 後續的篩選按鈕邏輯維持不變 ...
-            const coffeeCards = document.querySelectorAll('.coffee-card');
-            filterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    const filter = button.dataset.filter;
-                    coffeeCards.forEach(card => {
-                        const category = card.dataset.category;
-                        if (filter === 'all' || (category && category.includes(filter))) {
-                            card.style.display = 'flex';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-            });
-
-        } catch (error) {
-            console.error('載入商品時發生錯誤:', error);
-            productGrid.innerHTML = `<p class="col-span-full text-center text-red-500">${error.message}，請稍後再試。</p>`;
-        }
-    }
-
-    initializeShop();
-});
-</script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 變數宣告 ---
+    // --- 區塊 1: 變數宣告 ---
+    const productGrid = document.getElementById('product-grid');
+    const filterButtons = document.querySelectorAll('#filter-buttons .tab-btn');
     const cartSidebar = document.getElementById('cart-sidebar');
     const openCartButtons = document.querySelectorAll('#open-cart-btn');
     const closeCartBtn = document.getElementById('close-cart-btn');
@@ -595,18 +505,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const cartTotalEl = document.getElementById('cart-total');
     const cartCountEls = document.querySelectorAll('#cart-count');
     const menuCartDot = document.getElementById('menu-cart-dot');
-    const productGrid = document.getElementById('product-grid');
-    // 【已加回】結帳按鈕
     const cvsCheckoutBtn = document.getElementById('cvs-checkout-btn');
     const homeDeliveryCheckoutBtn = document.getElementById('home-delivery-checkout-btn');
 
     let cart = JSON.parse(localStorage.getItem('bamboo_cart')) || [];
 
-    // --- 核心功能函式 ---
+    // --- 區塊 2: 核心功能函式 ---
+
+    // 儲存購物車到 localStorage
     function saveCart() {
         localStorage.setItem('bamboo_cart', JSON.stringify(cart));
     }
 
+    // 渲染購物車內的商品項目
     function renderCartItems() {
         if (!cartItemsContainer) return;
         cartItemsContainer.innerHTML = '';
@@ -629,25 +540,28 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         if (totalItems > 0) {
             cartCountEls.forEach(el => { el.textContent = totalItems; el.classList.remove('hidden'); });
-            if (menuCartDot) { menuCartDot.classList.remove('hidden'); }
+            if (menuCartDot) menuCartDot.classList.remove('hidden');
         } else {
             cartCountEls.forEach(el => el.classList.add('hidden'));
-            if (menuCartDot) { menuCartDot.classList.add('hidden'); }
+            if (menuCartDot) menuCartDot.classList.add('hidden');
         }
     }
 
+    // 渲染購物車總金額
     function renderCartTotal() {
         if (!cartTotalEl) return;
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         cartTotalEl.textContent = `NT$ ${total}`;
     }
     
+    // 更新所有購物車相關的畫面
     function updateCart() {
         renderCartItems();
         renderCartTotal();
         saveCart();
     }
 
+    // 將商品加入購物車的邏輯
     function addToCart(product) {
         const existingItem = cart.find(item => item.id === product.id);
         if (existingItem) {
@@ -655,74 +569,150 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             cart.push({ ...product, quantity: 1 });
         }
-        // 【已加回】提示訊息
         alert(`「${product.name}」已加入購物車！`);
         updateCart();
     }
 
+    // 從購物車移除商品的邏輯
     function removeFromCart(productId) {
         cart = cart.filter(item => item.id !== productId);
         updateCart();
     }
 
-    // 【已加回】處理跳轉到結帳頁的共用函式
+    // 跳轉到結帳頁面的邏輯
     function proceedToCheckout(shippingMethod) {
         if (cart.length === 0) {
             alert('您的購物車是空的！');
             return;
         }
         localStorage.setItem('shippingMethod', shippingMethod);
-        // 我們也需要再次儲存購物車，確保 checkout.html 能拿到最新的
         localStorage.setItem('bamboo_cart', JSON.stringify(cart));
-        // 跳轉到結帳頁面
         window.location.href = '/coffee/checkout.html';
     }
-
-    // --- 事件監聽器設定 ---
-    openCartButtons.forEach(btn => {
-        btn.addEventListener('click', () => { if (cartSidebar) cartSidebar.classList.remove('translate-x-full'); });
-    });
-
-    if (closeCartBtn) {
-        closeCartBtn.addEventListener('click', () => cartSidebar.classList.add('translate-x-full'));
-    }
-
-    if (cartItemsContainer) {
-        cartItemsContainer.addEventListener('click', (event) => {
-            if (event.target && event.target.classList.contains('remove-from-cart-btn')) {
-                const productId = event.target.dataset.id;
-                removeFromCart(productId);
-            }
-        });
-    }
     
-    if (productGrid) {
-        productGrid.addEventListener('click', (event) => {
-            const buttonEl = event.target.closest('.add-to-cart-btn');
-            if (!buttonEl) return;
-            const productCard = buttonEl.closest('.coffee-card');
-            const productIdBase = productCard.dataset.productId;
-            const productName = buttonEl.dataset.name;
-            const selectedSpecEl = productCard.querySelector(`input[name="spec_${productIdBase}"]:checked`);
-            if (!selectedSpecEl) { alert('請選擇一個商品規格！'); return; }
-            const specValue = selectedSpecEl.value;
-            const specName = selectedSpecEl.dataset.specName;
-            const price = parseInt(selectedSpecEl.dataset.price, 10);
-            const uniqueProductId = `${productIdBase}_${specValue}`;
-            const product = { id: uniqueProductId, name: `${productName} (${specName})`, price: price };
-            addToCart(product);
+    // 產生單一商品卡片 HTML 的函式
+    function createProductCard(product, stockData = {}) {
+        let specsHtml = '';
+        product.specs.forEach((spec, index) => {
+            const isChecked = index === 0 ? 'checked' : '';
+            const sku = `${product.id}_${spec.id}`;
+            const stock = stockData[sku] !== undefined ? parseInt(stockData[sku], 10) : 'N/A';
+            const isOutOfStock = stock <= 0;
+            specsHtml += `
+                <label class="flex items-center p-1 border rounded-lg cursor-pointer ${isOutOfStock ? 'opacity-50 bg-gray-100' : 'hover:bg-amber-50'}">
+                    <input type="radio" name="spec_${product.id}" class="h-3 w-3 md:h-4 md:w-4 text-amber-600 border-gray-300 focus:ring-amber-500" value="${spec.id}" data-price="${spec.price}" data-spec-name="${spec.name}" ${isChecked} ${isOutOfStock ? 'disabled' : ''}>
+                    <div class="ml-2 text-gray-700 flex flex-col">
+                        <span class="font-semibold md:font-bold text-xs md:text-sm">${spec.name} ${isOutOfStock ? '(售完)' : ''}</span>
+                        <span class="text-xs md:text-sm font-semibold text-gray-800 ml-1">NT$ ${spec.price}</span>
+                    </div>
+                </label>
+            `;
         });
+        const allSpecsOutOfStock = product.specs.every(spec => {
+            const sku = `${product.id}_${spec.id}`;
+            return stockData[sku] !== undefined && parseInt(stockData[sku], 10) <= 0;
+        });
+        const buttonHtml = allSpecsOutOfStock
+            ? `<button class="w-full bg-gray-400 text-white font-bold py-1.5 px-2 rounded-lg cursor-not-allowed" disabled>庫存不足</button>`
+            : `<button class="add-to-cart-btn w-full bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded-lg transition-colors duration-300 text-xs md:text-sm" data-name="${product.name}">加入購物車</button>`;
+        return `
+            <div class="coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}">
+                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain">
+                <div class="p-3 md:p-4 flex-grow flex flex-col">
+                    <h3 class="text-sm md:text-base font-bold text-amber-800 mb-1 h-14 md:h-16">${product.name}</h3>
+                    <p class="text-gray-600 text-xs md:text-sm leading-5 mb-2">${product.description}</p>
+                    <div class="space-y-1">${specsHtml}</div>
+                    <div class="mt-auto pt-2">${buttonHtml}</div>
+                </div>
+            </div>
+        `;
     }
 
-    // 【已加回】綁定兩個結帳按鈕的事件
-    if (cvsCheckoutBtn) {
-        cvsCheckoutBtn.addEventListener('click', () => proceedToCheckout('CVS'));
-    }
-    if (homeDeliveryCheckoutBtn) {
-        homeDeliveryCheckoutBtn.addEventListener('click', () => proceedToCheckout('HOME_DELIVERY'));
+    // --- 區塊 3: 網站初始化與事件監聽 ---
+
+    // 載入商品與設定篩選按鈕
+    async function initializeShop() {
+        try {
+            const [productResponse, stockResponse] = await Promise.all([
+                fetch('/products.json'),
+                fetch('/.netlify/functions/query-stock')
+            ]);
+            if (!productResponse.ok) throw new Error(`無法讀取商品資料`);
+            if (!stockResponse.ok) throw new Error(`無法讀取庫存資料`);
+            const products = await productResponse.json();
+            const stockData = await stockResponse.json();
+            productGrid.innerHTML = products.map(product => createProductCard(product, stockData)).join('');
+
+            const coffeeCards = document.querySelectorAll('.coffee-card');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const filter = button.dataset.filter;
+                    coffeeCards.forEach(card => {
+                        const category = card.dataset.category;
+                        if (filter === 'all' || (category && category.includes(filter))) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        } catch (error) {
+            console.error('載入商品時發生錯誤:', error);
+            productGrid.innerHTML = `<p class="col-span-full text-center text-red-500">${error.message}，請稍後再試。</p>`;
+        }
     }
 
-    // --- 初始載入 ---
+    // 設定所有按鈕的點擊事件
+    function initializeEventListeners() {
+        openCartButtons.forEach(btn => {
+            btn.addEventListener('click', () => { if (cartSidebar) cartSidebar.classList.remove('translate-x-full'); });
+        });
+
+        if (closeCartBtn) {
+            closeCartBtn.addEventListener('click', () => cartSidebar.classList.add('translate-x-full'));
+        }
+
+        if (cartItemsContainer) {
+            cartItemsContainer.addEventListener('click', (event) => {
+                if (event.target && event.target.classList.contains('remove-from-cart-btn')) {
+                    const productId = event.target.dataset.id;
+                    removeFromCart(productId);
+                }
+            });
+        }
+        
+        if (productGrid) {
+            productGrid.addEventListener('click', (event) => {
+                const buttonEl = event.target.closest('.add-to-cart-btn');
+                if (!buttonEl) return;
+                const productCard = buttonEl.closest('.coffee-card');
+                const productIdBase = productCard.dataset.productId;
+                const productName = buttonEl.dataset.name;
+                const selectedSpecEl = productCard.querySelector(`input[name="spec_${productIdBase}"]:checked`);
+                if (!selectedSpecEl) { alert('請選擇一個商品規格！'); return; }
+                const specValue = selectedSpecEl.value;
+                const specName = selectedSpecEl.dataset.specName;
+                const price = parseInt(selectedSpecEl.dataset.price, 10);
+                const uniqueProductId = `${productIdBase}_${specValue}`;
+                const product = { id: uniqueProductId, name: `${productName} (${specName})`, price: price };
+                addToCart(product);
+            });
+        }
+
+        if (cvsCheckoutBtn) {
+            cvsCheckoutBtn.addEventListener('click', () => proceedToCheckout('CVS'));
+        }
+        if (homeDeliveryCheckoutBtn) {
+            homeDeliveryCheckoutBtn.addEventListener('click', () => proceedToCheckout('HOME_DELIVERY'));
+        }
+    }
+
+    // --- 執行初始化 ---
+    initializeShop();
+    initializeEventListeners();
     updateCart();
 });
 </script>
