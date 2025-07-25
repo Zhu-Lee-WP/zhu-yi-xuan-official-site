@@ -684,150 +684,78 @@ document.addEventListener('DOMContentLoaded', () => {
 
     <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // --- 變數宣告 ---
-    const cartSidebar = document.getElementById('cart-sidebar');
-    const openCartButtons = document.querySelectorAll('#open-cart-btn');
-    const closeCartBtn = document.getElementById('close-cart-btn');
-    const cartItemsContainer = document.getElementById('cart-items');
-    const cartTotalEl = document.getElementById('cart-total');
-    const cartCountEls = document.querySelectorAll('#cart-count');
-    const menuCartDot = document.getElementById('menu-cart-dot');
     const productGrid = document.getElementById('product-grid');
+    const filterButtons = document.querySelectorAll('#filter-buttons .tab-btn');
 
-    let cart = JSON.parse(localStorage.getItem('bamboo_cart')) || [];
-
-    // --- 核心功能函式 ---
-    function saveCart() {
-        localStorage.setItem('bamboo_cart', JSON.stringify(cart));
-    }
-
-    function renderCartItems() {
-        if (!cartItemsContainer) return;
-        cartItemsContainer.innerHTML = '';
-        
-        if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p class="text-gray-500">您的購物車是空的。</p>';
-            cartCountEls.forEach(el => el.classList.add('hidden'));
-            if (menuCartDot) menuCartDot.classList.add('hidden');
-            return;
-        }
-
-        let totalItems = 0;
-        cart.forEach(item => {
-            totalItems += item.quantity;
-            const itemEl = document.createElement('div');
-            itemEl.className = 'flex justify-between items-center mb-4 p-2 border-b';
-            itemEl.innerHTML = `
-                <div class="w-3/4">
-                    <p class="font-bold truncate">${item.name}</p>
-                    <p class="text-sm text-gray-600">NT$ ${item.price} x ${item.quantity}</p>
-                </div>
-                <div class="w-1/4 text-right">
-                    <button class="remove-from-cart-btn text-red-500 hover:text-red-700 text-sm" data-id="${item.id}">移除</button>
-                </div>
+    function createProductCard(product) {
+        let specsHtml = '';
+        product.specs.forEach((spec, index) => {
+            const isChecked = index === 0 ? 'checked' : '';
+            specsHtml += `
+                <label class="flex items-center p-1 border rounded-lg cursor-pointer hover:bg-amber-50">
+                    <input type="radio" name="spec_${product.id}" class="h-3 w-3 md:h-4 md:w-4 text-amber-600 border-gray-300 focus:ring-amber-500" value="${spec.id}" data-price="${spec.price}" data-spec-name="${spec.name}" ${isChecked}>
+                    <div class="ml-2 text-gray-700 flex flex-col">
+                        <span class="font-semibold md:font-bold text-xs md:text-sm">${spec.name}</span>
+                        <span class="text-xs md:text-sm font-semibold text-gray-800 ml-1">NT$ ${spec.price}</span>
+                    </div>
+                </label>
             `;
-            cartItemsContainer.appendChild(itemEl);
         });
 
-        if (totalItems > 0) {
-            cartCountEls.forEach(el => {
-                el.textContent = totalItems;
-                el.classList.remove('hidden');
+        return `
+            <div class="coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}">
+                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain">
+                <div class="p-3 md:p-4 flex-grow flex flex-col">
+                    <h3 class="text-sm md:text-base font-bold text-amber-800 mb-1 h-14 md:h-16">${product.name}</h3>
+                    <p class="text-gray-600 text-xs md:text-sm leading-5 mb-2">${product.description}</p>
+                    <div class="space-y-1">${specsHtml}</div>
+                    <div class="mt-auto pt-2">
+                        <button class="add-to-cart-btn w-full bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded-lg transition-colors duration-300 text-xs md:text-sm" data-name="${product.name}">加入購物車</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    async function initializeShop() {
+        // 【重要修正】加入了 try...catch 來捕捉錯誤
+        try {
+            // 1. 讀取 JSON 檔案
+            const response = await fetch('/products.json');
+            // 如果網路請求失敗 (例如 404 Not Found)，就拋出錯誤
+            if (!response.ok) {
+                throw new Error(`無法讀取商品資料，伺服器回應: ${response.status}`);
+            }
+            const products = await response.json();
+            
+            // 2. 將商品渲染到畫面上
+            productGrid.innerHTML = products.map(createProductCard).join('');
+
+            // 3. 設定篩選按鈕的功能
+            const coffeeCards = document.querySelectorAll('.coffee-card');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+                    const filter = button.dataset.filter;
+                    coffeeCards.forEach(card => {
+                        const category = card.dataset.category;
+                        if (filter === 'all' || (category && category.includes(filter))) {
+                            card.style.display = 'flex';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
             });
-            if (menuCartDot) {
-                menuCartDot.classList.remove('hidden');
-            }
-        } else {
-            cartCountEls.forEach(el => el.classList.add('hidden'));
-            if (menuCartDot) {
-                menuCartDot.classList.add('hidden');
-            }
+        } catch (error) {
+            console.error('載入商品時發生錯誤:', error);
+            // 在畫面上顯示一個使用者看得懂的錯誤訊息
+            productGrid.innerHTML = '<p class="col-span-full text-center text-red-500">商品載入失敗，請檢查 products.json 檔案是否存在且格式正確，或聯繫管理員。</p>';
         }
     }
 
-    function renderCartTotal() {
-        if (!cartTotalEl) return;
-        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        cartTotalEl.textContent = `NT$ ${total}`;
-    }
-    
-    function updateCart() {
-        renderCartItems();
-        renderCartTotal();
-        saveCart();
-    }
-
-    function addToCart(product) {
-        const existingItem = cart.find(item => item.id === product.id);
-        if (existingItem) {
-            existingItem.quantity++;
-        } else {
-            cart.push({ ...product, quantity: 1 });
-        }
-        updateCart();
-    }
-
-    function removeFromCart(productId) {
-        cart = cart.filter(item => item.id !== productId);
-        updateCart();
-    }
-
-    // --- 事件監聽器設定 ---
-    
-    // 監聽所有「打開購物車」的按鈕
-    openCartButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (cartSidebar) cartSidebar.classList.remove('translate-x-full');
-        });
-    });
-
-    // 監聽「關閉購物車」的按鈕
-    if (closeCartBtn) {
-        closeCartBtn.addEventListener('click', () => cartSidebar.classList.add('translate-x-full'));
-    }
-
-    // 監聽購物車內的「移除」按鈕 (事件委派)
-    if (cartItemsContainer) {
-        cartItemsContainer.addEventListener('click', (event) => {
-            if (event.target && event.target.classList.contains('remove-from-cart-btn')) {
-                const productId = event.target.dataset.id;
-                removeFromCart(productId);
-            }
-        });
-    }
-    
-    // 監聽商品列表的「加入購物車」按鈕 (事件委派)
-    if (productGrid) {
-        productGrid.addEventListener('click', (event) => {
-            const buttonEl = event.target.closest('.add-to-cart-btn');
-            if (!buttonEl) return;
-
-            const productCard = buttonEl.closest('.coffee-card');
-            const productIdBase = productCard.dataset.productId;
-            const productName = buttonEl.dataset.name;
-
-            const selectedSpecEl = productCard.querySelector(`input[name="spec_${productIdBase}"]:checked`);
-            if (!selectedSpecEl) {
-                alert('請選擇一個商品規格！');
-                return;
-            }
-
-            const specValue = selectedSpecEl.value;
-            const specName = selectedSpecEl.dataset.specName;
-            const price = parseInt(selectedSpecEl.dataset.price, 10);
-            const uniqueProductId = `${productIdBase}_${specValue}`;
-
-            const product = {
-                id: uniqueProductId,
-                name: `${productName} (${specName})`,
-                price: price,
-            };
-            addToCart(product);
-        });
-    }
-
-    // --- 初始載入 ---
-    updateCart();
+    initializeShop();
 });
 </script>
     <form name="orders" netlify netlify-honeypot="bot-field" hidden>
