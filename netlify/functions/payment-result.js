@@ -15,7 +15,7 @@ exports.handler = async function(event, context) {
     const siteUrl = process.env.URL;
 
     // 準備要重新導向的、帶有訂單編號的感謝頁面網址
-    const thankYouUrl = `${siteUrl}/thankyou.html?order=${orderNumber}`;
+    const thankYouUrl = `${siteUrl}/coffee/thankyou.html?order=${orderNumber}`;
 
     // 回傳 302 Redirect 指令，讓瀏覽器跳轉到上面的網址
     return {
