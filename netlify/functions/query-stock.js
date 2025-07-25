@@ -2,7 +2,7 @@
 const fetch = require('node-fetch');
 
 exports.handler = async function(event, context) {
-    const n8nStockWebhookUrl = process.env.N8N_STOCK_WEBHOO_URL;
+    const n8nStockWebhookUrl = process.env.N8N_STOCK_WEBHOOK_URL;
 
     // ▼▼▼ 【偵錯日誌】我們在這裡將要使用的網址完整印出來 ▼▼▼
     console.log(`[偵錯] 準備呼叫的 n8n 庫存網址為: "${n8nStockWebhookUrl}"`);
