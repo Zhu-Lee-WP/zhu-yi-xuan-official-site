@@ -613,27 +613,123 @@ function createProductCard(product) {
 
     <script>
 document.addEventListener('DOMContentLoaded', () => {
-    // ... 此處省略其他購物車變數宣告 (維持不變) ...
+    // --- 變數宣告 ---
     const cartSidebar = document.getElementById('cart-sidebar');
-    const openCartButtons = document.querySelectorAll('#open-cart-btn'); 
+    const openCartButtons = document.querySelectorAll('#open-cart-btn');
     const closeCartBtn = document.getElementById('close-cart-btn');
     const cartItemsContainer = document.getElementById('cart-items');
     const cartTotalEl = document.getElementById('cart-total');
-    const cartCountEls = document.querySelectorAll('#cart-count'); 
+    const cartCountEls = document.querySelectorAll('#cart-count');
     const menuCartDot = document.getElementById('menu-cart-dot');
-    const productGrid = document.getElementById('product-grid'); // 取得商品列表的容器
+    const productGrid = document.getElementById('product-grid');
 
     let cart = JSON.parse(localStorage.getItem('bamboo_cart')) || [];
 
-    // ... 此處省略 addToCart, removeFromCart, updateCart, saveCart, renderCartItems, renderCartTotal 等函式 (維持不變) ...
+    // --- 核心功能函式 ---
+    function saveCart() {
+        localStorage.setItem('bamboo_cart', JSON.stringify(cart));
+    }
 
-    // 【重要修正】修改「加入購物車」的事件監聽方式
-    // 因為商品是動態產生的，我們不能直接在一開始就綁定按鈕
-    // 我們改為監聽整個商品容器，這就是「事件委派 (Event Delegation)」
+    function renderCartItems() {
+        if (!cartItemsContainer) return;
+        cartItemsContainer.innerHTML = '';
+        
+        if (cart.length === 0) {
+            cartItemsContainer.innerHTML = '<p class="text-gray-500">您的購物車是空的。</p>';
+            cartCountEls.forEach(el => el.classList.add('hidden'));
+            if (menuCartDot) menuCartDot.classList.add('hidden');
+            return;
+        }
+
+        let totalItems = 0;
+        cart.forEach(item => {
+            totalItems += item.quantity;
+            const itemEl = document.createElement('div');
+            itemEl.className = 'flex justify-between items-center mb-4 p-2 border-b';
+            itemEl.innerHTML = `
+                <div class="w-3/4">
+                    <p class="font-bold truncate">${item.name}</p>
+                    <p class="text-sm text-gray-600">NT$ ${item.price} x ${item.quantity}</p>
+                </div>
+                <div class="w-1/4 text-right">
+                    <button class="remove-from-cart-btn text-red-500 hover:text-red-700 text-sm" data-id="${item.id}">移除</button>
+                </div>
+            `;
+            cartItemsContainer.appendChild(itemEl);
+        });
+
+        if (totalItems > 0) {
+            cartCountEls.forEach(el => {
+                el.textContent = totalItems;
+                el.classList.remove('hidden');
+            });
+            if (menuCartDot) {
+                menuCartDot.classList.remove('hidden');
+            }
+        } else {
+            cartCountEls.forEach(el => el.classList.add('hidden'));
+            if (menuCartDot) {
+                menuCartDot.classList.add('hidden');
+            }
+        }
+    }
+
+    function renderCartTotal() {
+        if (!cartTotalEl) return;
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        cartTotalEl.textContent = `NT$ ${total}`;
+    }
+    
+    function updateCart() {
+        renderCartItems();
+        renderCartTotal();
+        saveCart();
+    }
+
+    function addToCart(product) {
+        const existingItem = cart.find(item => item.id === product.id);
+        if (existingItem) {
+            existingItem.quantity++;
+        } else {
+            cart.push({ ...product, quantity: 1 });
+        }
+        updateCart();
+    }
+
+    function removeFromCart(productId) {
+        cart = cart.filter(item => item.id !== productId);
+        updateCart();
+    }
+
+    // --- 事件監聽器設定 ---
+    
+    // 監聽所有「打開購物車」的按鈕
+    openCartButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (cartSidebar) cartSidebar.classList.remove('translate-x-full');
+        });
+    });
+
+    // 監聽「關閉購物車」的按鈕
+    if (closeCartBtn) {
+        closeCartBtn.addEventListener('click', () => cartSidebar.classList.add('translate-x-full'));
+    }
+
+    // 監聽購物車內的「移除」按鈕 (事件委派)
+    if (cartItemsContainer) {
+        cartItemsContainer.addEventListener('click', (event) => {
+            if (event.target && event.target.classList.contains('remove-from-cart-btn')) {
+                const productId = event.target.dataset.id;
+                removeFromCart(productId);
+            }
+        });
+    }
+    
+    // 監聽商品列表的「加入購物車」按鈕 (事件委派)
     if (productGrid) {
         productGrid.addEventListener('click', (event) => {
             const buttonEl = event.target.closest('.add-to-cart-btn');
-            if (!buttonEl) return; // 如果點的不是按鈕，就什麼都不做
+            if (!buttonEl) return;
 
             const productCard = buttonEl.closest('.coffee-card');
             const productIdBase = productCard.dataset.productId;
@@ -659,9 +755,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ... 其他購物車事件監聽器 (開啟/關閉/移除) 維持不變 ...
-
-    updateCart(); // 初始載入時更新一次購物車畫面
+    // --- 初始載入 ---
+    updateCart();
 });
 </script>
     <form name="orders" netlify netlify-honeypot="bot-field" hidden>
