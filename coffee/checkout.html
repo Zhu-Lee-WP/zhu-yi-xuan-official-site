@@ -189,7 +189,7 @@ confirmOrderBtn.addEventListener('click', async () => {
             // 清空購物車並跳轉到感謝頁面
             localStorage.removeItem('cart');
             localStorage.removeItem('selectedStore');
-            window.location.href = `/thankyou.html?order=${result.orderNumber}`;
+            window.location.href = `/coffee/thankyou.html?order=${result.orderNumber}`;
         }
 
     } catch (error) {
