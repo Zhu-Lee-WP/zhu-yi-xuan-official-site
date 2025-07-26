@@ -80,10 +80,10 @@
     "name": "衣索比亞 西達瑪 柏娜 芭蕾處理場 日曬",
     "description": "風味描述：葡萄、甜桃、梔子花、蔗糖。",
     "imageUrl": "/images/coffee/衣索比亞 八蕾處理廠.jpg",
-    "category": "sale",
+    "category": "light-medium sale",
     "specs": [
       {
-        "id": "half-pound sale",
+        "id": "half-pound",
         "name": "半磅 (熟豆)",
         "price": 400
       },
