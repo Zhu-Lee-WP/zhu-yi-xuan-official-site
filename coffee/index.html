@@ -491,7 +491,22 @@
         </div>
         </div>
     </footer>
-
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const el = document.getElementById('view-counter');
+  
+  try {
+    // 每次載入 +1 並回傳最新值
+    // 我們為主頁設定一個專屬的計數器 ID: "main-page"
+    const res  = await fetch(`https://api.counterapi.dev/v1/ZueYiXuan-page/main-page/up`);
+    const data = await res.json();
+    el.textContent = data.count;
+  } catch (err) {
+    console.error('載入計數器失敗:', err);
+    el.textContent = '無法載入';
+  }
+});
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // --- 區塊 1: 變數宣告 ---
