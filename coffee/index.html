@@ -678,23 +678,61 @@ function createProductCard(product, stockData = {}) {
             });
         }
         
-        if (productGrid) {
-            productGrid.addEventListener('click', (event) => {
-                const buttonEl = event.target.closest('.add-to-cart-btn');
-                if (!buttonEl) return;
-                const productCard = buttonEl.closest('.coffee-card');
-                const productIdBase = productCard.dataset.productId;
-                const productName = buttonEl.dataset.name;
-                const selectedSpecEl = productCard.querySelector(`input[name="spec_${productIdBase}"]:checked`);
-                if (!selectedSpecEl) { alert('請選擇一個商品規格！'); return; }
-                const specValue = selectedSpecEl.value;
-                const specName = selectedSpecEl.dataset.specName;
-                const price = parseInt(selectedSpecEl.dataset.price, 10);
-                const uniqueProductId = `${productIdBase}_${specValue}`;
-                const product = { id: uniqueProductId, name: `${productName} (${specName})`, price: price };
-                addToCart(product);
-            });
+        // ▼▼▼ 請用這個新版本，完整替換掉舊的 productGrid 事件監聽器 ▼▼▼
+if (productGrid) {
+    productGrid.addEventListener('click', async (event) => {
+        const buttonEl = event.target.closest('.add-to-cart-btn');
+        if (!buttonEl) return;
+
+        const productCard = buttonEl.closest('.coffee-card');
+        const productIdBase = productCard.dataset.productId;
+        const productName = buttonEl.dataset.name;
+
+        const selectedSpecEl = productCard.querySelector(`input[name="spec_${productIdBase}"]:checked`);
+        if (!selectedSpecEl) {
+            alert('請選擇一個商品規格！');
+            return;
         }
+
+        // 【修正點三-a】檢查被選取的選項是否是 disabled (不可用)
+        if (selectedSpecEl.disabled) {
+            alert('此規格目前庫存不足，請選擇其他規格。');
+            return;
+        }
+
+        const specValue = selectedSpecEl.value;
+        const specName = selectedSpecEl.dataset.specName;
+        const price = parseInt(selectedSpecEl.dataset.price, 10);
+        const uniqueProductId = `${productIdBase}_${specValue}`;
+
+        // 【修正點三-b】再次取得最新庫存，並檢查購物車數量是否超過庫存
+        try {
+            const stockResponse = await fetch('/.netlify/functions/query-stock');
+            if (!stockResponse.ok) throw new Error('無法確認庫存');
+            const stockData = await stockResponse.json();
+            
+            const currentStock = Number(stockData[uniqueProductId] ?? 999);
+            const quantityInCart = cart.find(item => item.id === uniqueProductId)?.quantity || 0;
+
+            if (quantityInCart >= currentStock) {
+                alert(`「${productName} (${specName})」庫存不足，您已將所有庫存加入購物車。`);
+                return;
+            }
+
+            // 所有檢查都通過後，才執行加入購物車
+            const product = {
+                id: uniqueProductId,
+                name: `${productName} (${specName})`,
+                price: price,
+            };
+            addToCart(product);
+
+        } catch (error) {
+            console.error('加入購物車時檢查庫存失敗:', error);
+            alert('檢查庫存時發生錯誤，請稍後再試。');
+        }
+    });
+}
 
         if (cvsCheckoutBtn) { cvsCheckoutBtn.addEventListener('click', () => proceedToCheckout('CVS')); }
         if (homeDeliveryCheckoutBtn) { homeDeliveryCheckoutBtn.addEventListener('click', () => proceedToCheckout('HOME_DELIVERY')); }
