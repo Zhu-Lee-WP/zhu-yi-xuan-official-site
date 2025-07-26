@@ -568,21 +568,55 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     
     function createProductCard(product, stockData = {}) {
-        let specsHtml = '';
-        product.specs.forEach((spec, index) => {
-            const isChecked = index === 0 ? 'checked' : '';
-            const sku = `${product.id}_${spec.id}`;
-            const stock = stockData[sku] !== undefined ? parseInt(stockData[sku], 10) : 'N/A';
-            const isOutOfStock = stock <= 0;
-            specsHtml += `<label class="flex items-center p-1 border rounded-lg cursor-pointer ${isOutOfStock ? 'opacity-50 bg-gray-100' : 'hover:bg-amber-50'}"><input type="radio" name="spec_${product.id}" class="h-3 w-3 md:h-4 md:w-4 text-amber-600 border-gray-300 focus:ring-amber-500" value="${spec.id}" data-price="${spec.price}" data-spec-name="${spec.name}" ${isChecked} ${isOutOfStock ? 'disabled' : ''}><div class="ml-2 text-gray-700 flex flex-col"><span class="font-semibold md:font-bold text-xs md:text-sm">${spec.name} ${isOutOfStock ? '(售完)' : ''}</span><span class="text-xs md:text-sm font-semibold text-gray-800 ml-1">NT$ ${spec.price}</span></div></label>`;
-        });
-        const allSpecsOutOfStock = product.specs.every(spec => {
-            const sku = `${product.id}_${spec.id}`;
-            return stockData[sku] !== undefined && parseInt(stockData[sku], 10) <= 0;
-        });
-        const buttonHtml = allSpecsOutOfStock ? `<button class="w-full bg-gray-400 text-white font-bold py-1.5 px-2 rounded-lg cursor-not-allowed" disabled>庫存不足</button>` : `<button class="add-to-cart-btn w-full bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded-lg transition-colors duration-300 text-xs md:text-sm" data-name="${product.name}">加入購物車</button>`;
-        return `<div class="coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}"><img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain"><div class="p-3 md:p-4 flex-grow flex flex-col"><h3 class="text-sm md:text-base font-bold text-amber-800 mb-1 h-14 md:h-16">${product.name}</h3><p class="text-gray-600 text-xs md:text-sm leading-5 mb-2">${product.description}</p><div class="space-y-1">${specsHtml}</div><div class="mt-auto pt-2">${buttonHtml}</div></div></div>`;
-    }
+    // 【新邏輯】在產生規格選項前，先找出第一個有庫存的規格索引
+    const firstAvailableSpecIndex = product.specs.findIndex(spec => {
+        const sku = `${product.id}_${spec.id}`;
+        // 如果庫存資料不存在，我們預設它是有貨的 (給予一個大數字)
+        const stock = stockData[sku] !== undefined ? parseInt(stockData[sku], 10) : 999;
+        return stock > 0;
+    });
+
+    let specsHtml = '';
+    product.specs.forEach((spec, index) => {
+        // 【新邏輯】如果找不到任何有庫存的規格 (firstAvailableSpecIndex 為 -1)，就預設選第一個。否則，就選第一個有庫存的。
+        const isChecked = index === (firstAvailableSpecIndex === -1 ? 0 : firstAvailableSpecIndex) ? 'checked' : '';
+        
+        const sku = `${product.id}_${spec.id}`;
+        const stock = stockData[sku] !== undefined ? parseInt(stockData[sku], 10) : 'N/A';
+        const isOutOfStock = stock <= 0;
+
+        specsHtml += `
+            <label class="flex items-center p-1 border rounded-lg cursor-pointer ${isOutOfStock ? 'opacity-50 bg-gray-100' : 'hover:bg-amber-50'}">
+                <input type="radio" name="spec_${product.id}" class="h-3 w-3 md:h-4 md:w-4 text-amber-600 border-gray-300 focus:ring-amber-500" value="${spec.id}" data-price="${spec.price}" data-spec-name="${spec.name}" ${isChecked} ${isOutOfStock ? 'disabled' : ''}>
+                <div class="ml-2 text-gray-700 flex flex-col">
+                    <span class="font-semibold md:font-bold text-xs md:text-sm">${spec.name} ${isOutOfStock ? '(售完)' : ''}</span>
+                    <span class="text-xs md:text-sm font-semibold text-gray-800 ml-1">NT$ ${spec.price}</span>
+                </div>
+            </label>
+        `;
+    });
+
+    const allSpecsOutOfStock = product.specs.every(spec => {
+        const sku = `${product.id}_${spec.id}`;
+        return stockData[sku] !== undefined && parseInt(stockData[sku], 10) <= 0;
+    });
+
+    const buttonHtml = allSpecsOutOfStock
+        ? `<button class="w-full bg-gray-400 text-white font-bold py-1.5 px-2 rounded-lg cursor-not-allowed" disabled>庫存不足</button>`
+        : `<button class="add-to-cart-btn w-full bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded-lg transition-colors duration-300 text-xs md:text-sm" data-name="${product.name}">加入購物車</button>`;
+
+    return `
+        <div class="coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}">
+            <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain">
+            <div class="p-3 md:p-4 flex-grow flex flex-col">
+                <h3 class="text-sm md:text-base font-bold text-amber-800 mb-1">${product.name}</h3>
+                <p class="text-gray-600 text-xs md:text-sm leading-5 mb-2">${product.description}</p>
+                <div class="space-y-1">${specsHtml}</div>
+                <div class="mt-auto pt-2">${buttonHtml}</div>
+            </div>
+        </div>
+    `;
+}
 
     // --- 區塊 3: 網站初始化與事件監聽 ---
 
