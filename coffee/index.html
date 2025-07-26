@@ -567,23 +567,24 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/coffee/checkout.html';
     }
     
-    function createProductCard(product, stockData = {}) {
-    // 【新邏輯】在產生規格選項前，先找出第一個有庫存的規格索引
+    // ▼▼▼ 請用這個新版本，完整替換掉舊的 createProductCard 函式 ▼▼▼
+function createProductCard(product, stockData = {}) {
     const firstAvailableSpecIndex = product.specs.findIndex(spec => {
         const sku = `${product.id}_${spec.id}`;
-        // 如果庫存資料不存在，我們預設它是有貨的 (給予一個大數字)
-        const stock = stockData[sku] !== undefined ? parseInt(stockData[sku], 10) : 999;
-        return stock > 0;
+        // 【修正點二】使用 Number(stockData[sku] ?? -1) 確保 stock 永遠是數字。
+        // ?? -1 的意思是，如果庫存資料不存在 (undefined)，我們就當作它是-1 (代表庫存未知，但可購買)
+        const stock = Number(stockData[sku] ?? -1);
+        return stock !== 0; // 只要不是明確的 0，都算可選
     });
 
     let specsHtml = '';
     product.specs.forEach((spec, index) => {
-        // 【新邏輯】如果找不到任何有庫存的規格 (firstAvailableSpecIndex 為 -1)，就預設選第一個。否則，就選第一個有庫存的。
         const isChecked = index === (firstAvailableSpecIndex === -1 ? 0 : firstAvailableSpecIndex) ? 'checked' : '';
-        
         const sku = `${product.id}_${spec.id}`;
-        const stock = stockData[sku] !== undefined ? parseInt(stockData[sku], 10) : 'N/A';
-        const isOutOfStock = stock <= 0;
+        
+        // 【修正點二】同樣在這裡使用更嚴謹的數字處理
+        const stock = Number(stockData[sku] ?? -1);
+        const isOutOfStock = stock === 0; // 只有明確為 0 才算缺貨
 
         specsHtml += `
             <label class="flex items-center p-1 border rounded-lg cursor-pointer ${isOutOfStock ? 'opacity-50 bg-gray-100' : 'hover:bg-amber-50'}">
@@ -598,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const allSpecsOutOfStock = product.specs.every(spec => {
         const sku = `${product.id}_${spec.id}`;
-        return stockData[sku] !== undefined && parseInt(stockData[sku], 10) <= 0;
+        return Number(stockData[sku] ?? -1) === 0;
     });
 
     const buttonHtml = allSpecsOutOfStock
@@ -617,7 +618,6 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 }
-
     // --- 區塊 3: 網站初始化與事件監聽 ---
 
     async function initializeShop() {
