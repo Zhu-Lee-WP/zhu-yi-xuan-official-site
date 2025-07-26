@@ -582,30 +582,35 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/coffee/checkout.html';
     }
     
-    // ▼▼▼ 請用這個新版本，完整替換掉舊的 createProductCard 函式 ▼▼▼
+// ▼▼▼ 請用這個新版本，完整替換掉舊的 createProductCard 函式 ▼▼▼
 function createProductCard(product, stockData = {}) {
     const firstAvailableSpecIndex = product.specs.findIndex(spec => {
         const sku = `${product.id}_${spec.id}`;
-        // 【修正點二】使用 Number(stockData[sku] ?? -1) 確保 stock 永遠是數字。
-        // ?? -1 的意思是，如果庫存資料不存在 (undefined)，我們就當作它是-1 (代表庫存未知，但可購買)
-        const stock = Number(stockData[sku] ?? -1);
-        return stock !== 0; // 只要不是明確的 0，都算可選
+        const stock = Number(stockData[sku] ?? 0);
+        return stock > 0;
     });
 
     let specsHtml = '';
     product.specs.forEach((spec, index) => {
         const isChecked = index === (firstAvailableSpecIndex === -1 ? 0 : firstAvailableSpecIndex) ? 'checked' : '';
         const sku = `${product.id}_${spec.id}`;
-        
-        // 【修正點二】同樣在這裡使用更嚴謹的數字處理
-        const stock = Number(stockData[sku] ?? -1);
-        const isOutOfStock = stock === 0; // 只有明確為 0 才算缺貨
+        const stock = Number(stockData[sku] ?? 0);
+        const isOutOfStock = stock <= 0;
+
+        // 【新邏輯】判斷是否為低庫存
+        const isLowStock = stock > 0 && stock <= 2;
 
         specsHtml += `
             <label class="flex items-center p-1 border rounded-lg cursor-pointer ${isOutOfStock ? 'opacity-50 bg-gray-100' : 'hover:bg-amber-50'}">
                 <input type="radio" name="spec_${product.id}" class="h-3 w-3 md:h-4 md:w-4 text-amber-600 border-gray-300 focus:ring-amber-500" value="${spec.id}" data-price="${spec.price}" data-spec-name="${spec.name}" ${isChecked} ${isOutOfStock ? 'disabled' : ''}>
                 <div class="ml-2 text-gray-700 flex flex-col">
-                    <span class="font-semibold md:font-bold text-xs md:text-sm">${spec.name} ${isOutOfStock ? '(售完)' : ''}</span>
+                    <span class="font-semibold md:font-bold text-xs md:text-sm">
+                        ${spec.name} 
+                        ${isOutOfStock ? '(售完)' : ''}
+                        
+                        ${isLowStock ? '<span class="text-gray-400 font-normal text-xs ml-1">(低庫存)</span>' : ''}
+
+                    </span>
                     <span class="text-xs md:text-sm font-semibold text-gray-800 ml-1">NT$ ${spec.price}</span>
                 </div>
             </label>
@@ -614,7 +619,7 @@ function createProductCard(product, stockData = {}) {
 
     const allSpecsOutOfStock = product.specs.every(spec => {
         const sku = `${product.id}_${spec.id}`;
-        return Number(stockData[sku] ?? -1) === 0;
+        return Number(stockData[sku] ?? 0) <= 0;
     });
 
     const buttonHtml = allSpecsOutOfStock
