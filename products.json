@@ -1,14 +1,14 @@
 [
   {
     "id": "prod_001",
-    "name": "衣索比亞 古籍 烏拉嘎 雅比兔 水洗",
+    "name": "衣索比亞 古吉 烏拉嘎 雅比兔 水洗",
     "description": "風味描述：檸檬皮、蜜柚、橘皮、蔗糖。",
     "imageUrl": "/images/coffee/衣索比亞 雅比兔 水洗.jpg",
     "category": "light-medium",
     "specs": [
       {
         "id": "half-pound",
-        "name": "半磅 (咖啡豆)",
+        "name": "半磅 (熟豆)",
         "price": 380
       },
       {
@@ -27,7 +27,7 @@
     "specs": [
       {
         "id": "half-pound",
-        "name": "半磅 (咖啡豆)",
+        "name": "半磅 (熟豆)",
         "price": 390
       },
       {
@@ -46,7 +46,7 @@
     "specs": [
       {
         "id": "half-pound",
-        "name": "半磅 (咖啡豆)",
+        "name": "半磅 (熟豆)",
         "price": 370
       },
       {
@@ -65,7 +65,7 @@
     "specs": [
       {
         "id": "half-pound",
-        "name": "半磅 (咖啡豆)",
+        "name": "半磅 (熟豆)",
         "price": 360
       },
       {
@@ -83,8 +83,8 @@
     "category": "sale",
     "specs": [
       {
-        "id": "half-pound",
-        "name": "半磅 (咖啡豆)",
+        "id": "half-pound sale",
+        "name": "半磅 (熟豆)",
         "price": 400
       },
       {
@@ -103,7 +103,7 @@
     "specs": [
       {
         "id": "half-pound",
-        "name": "半磅 (咖啡豆)",
+        "name": "半磅 (熟豆)",
         "price": 350
       },
       {
@@ -112,5 +112,58 @@
         "price": 150
       }
     ]
+  },
+  {
+    "id": "prod_007",
+    "name": "哥斯大黎加 塔拉珠 龐特薇處理廠 南方莊園 日曬",
+    "description": "風味描述：葡萄乾、黑莓、芒果乾、蔗糖。",
+    "imageUrl": "/images/coffee/costa.jpg",
+    "category": "light-medium",
+    "specs": [
+      {
+        "id": "half-pound",
+        "name": "半磅 (熟豆)",
+        "price": 420
+      },
+      {
+        "id": "drip-bag-5",
+        "name": "濾掛包 (5入)",
+        "price": 175
+      }
+    ]
+  },
+  {
+    "id": "prod_008",
+    "name": "竹意軒義式配方",
+    "description": "風味描述：葡萄乾、烤堅果、可可、白糖。",
+    "imageUrl": "/images/coffee/竹意軒義式配方.jpg",
+    "category": "medium-dark",
+    "specs": [
+      {
+        "id": "one-pound",
+        "name": "一磅 (熟豆)",
+        "price": 540
+      }
+    ]
+  },
+  {
+    "id": "prod_009",
+    "name": "肯亞 AA FAQ Plus 水洗",
+    "description": "風味描述：煙燻烏梅、黑李、奶油、白糖。",
+    "imageUrl": "/images/coffee/肯亞 AA FAQ plus 水洗.jpg",
+    "category": "medium-dark",
+    "specs": [
+      {
+        "id": "half-pound",
+        "name": "半磅 (熟豆)",
+        "price": 340
+      },
+      {
+        "id": "drip-bag-5",
+        "name": "濾掛包 (5入)",
+        "price": 150
+      }
+    ]
   }
+
 ]
