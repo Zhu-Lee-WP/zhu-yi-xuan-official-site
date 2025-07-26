@@ -596,8 +596,6 @@ function createProductCard(product, stockData = {}) {
         const sku = `${product.id}_${spec.id}`;
         const stock = Number(stockData[sku] ?? 0);
         const isOutOfStock = stock <= 0;
-        
-        // 【已恢復】判斷是否為低庫存的邏輯
         const isLowStock = stock > 0 && stock <= 2;
 
         specsHtml += `
@@ -629,13 +627,17 @@ function createProductCard(product, stockData = {}) {
             <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain">
             
             <div class="p-3 md:p-4 flex-grow flex flex-col">
-                <h3 class="text-sm md:text-base font-bold text-amber-800 mb-1">${product.name}</h3>
-                <p class="text-gray-600 text-xs md:text-sm leading-5 mb-2">${product.description}</p>
-                <div class="space-y-1">${specsHtml}</div>
+                
+                <div class="flex-grow">
+                    <h3 class="text-sm md:text-base font-bold text-amber-800 mb-1">${product.name}</h3>
+                    <p class="text-gray-600 text-xs md:text-sm leading-5">${product.description}</p>
+                </div>
                 
                 <div class="mt-auto pt-2">
-                    ${buttonHtml}
+                    <div class="space-y-1 mb-2">${specsHtml}</div>
+                    <div>${buttonHtml}</div>
                 </div>
+
             </div>
         </div>
     `;
