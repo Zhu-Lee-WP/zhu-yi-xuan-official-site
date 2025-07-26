@@ -512,6 +512,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const feedbackForm = document.getElementById('feedback-form');
 
     let cart = JSON.parse(localStorage.getItem('bamboo_cart')) || [];
+    let stockMap = {}; // 【新增】用來儲存從後端拿到的庫存資料
 
     // --- 區塊 2: 核心功能函式 (購物車、商品卡片產生等) ---
 
@@ -627,6 +628,7 @@ function createProductCard(product, stockData = {}) {
             if (!stockResponse.ok) throw new Error(`無法讀取庫存資料`);
             const products = await productResponse.json();
             const stockData = await stockResponse.json();
+            stockMap = stockData; // 【新增】將庫存資料存起來
             productGrid.innerHTML = products.map(product => createProductCard(product, stockData)).join('');
 
             const coffeeCards = document.querySelectorAll('.coffee-card');
@@ -678,9 +680,9 @@ function createProductCard(product, stockData = {}) {
             });
         }
         
-        // ▼▼▼ 請用這個新版本，完整替換掉舊的 productGrid 事件監聽器 ▼▼▼
+// ▼▼▼ 請用這個新版本，完整替換掉舊的 productGrid 事件監聽器 ▼▼▼
 if (productGrid) {
-    productGrid.addEventListener('click', async (event) => {
+    productGrid.addEventListener('click', (event) => {
         const buttonEl = event.target.closest('.add-to-cart-btn');
         if (!buttonEl) return;
 
@@ -694,7 +696,6 @@ if (productGrid) {
             return;
         }
 
-        // 【修正點三-a】檢查被選取的選項是否是 disabled (不可用)
         if (selectedSpecEl.disabled) {
             alert('此規格目前庫存不足，請選擇其他規格。');
             return;
@@ -705,34 +706,25 @@ if (productGrid) {
         const price = parseInt(selectedSpecEl.dataset.price, 10);
         const uniqueProductId = `${productIdBase}_${specValue}`;
 
-        // 【修正點三-b】再次取得最新庫存，並檢查購物車數量是否超過庫存
-        try {
-            const stockResponse = await fetch('/.netlify/functions/query-stock');
-            if (!stockResponse.ok) throw new Error('無法確認庫存');
-            const stockData = await stockResponse.json();
-            
-            const currentStock = Number(stockData[uniqueProductId] ?? 999);
-            const quantityInCart = cart.find(item => item.id === uniqueProductId)?.quantity || 0;
+        // 【重要修正】直接從我們儲存的 stockMap 變數中檢查庫存，不再需要 fetch
+        const currentStock = Number(stockMap[uniqueProductId] ?? 999);
+        const quantityInCart = cart.find(item => item.id === uniqueProductId)?.quantity || 0;
 
-            if (quantityInCart >= currentStock) {
-                alert(`「${productName} (${specName})」庫存不足，您已將所有庫存加入購物車。`);
-                return;
-            }
-
-            // 所有檢查都通過後，才執行加入購物車
-            const product = {
-                id: uniqueProductId,
-                name: `${productName} (${specName})`,
-                price: price,
-            };
-            addToCart(product);
-
-        } catch (error) {
-            console.error('加入購物車時檢查庫存失敗:', error);
-            alert('檢查庫存時發生錯誤，請稍後再試。');
+        if (quantityInCart >= currentStock) {
+            alert(`「${productName} (${specName})」庫存不足，您已將所有庫存加入購物車。`);
+            return;
         }
+
+        // 所有檢查都通過後，才執行加入購物車
+        const product = {
+            id: uniqueProductId,
+            name: `${productName} (${specName})`,
+            price: price,
+        };
+        addToCart(product);
     });
 }
+
 
         if (cvsCheckoutBtn) { cvsCheckoutBtn.addEventListener('click', () => proceedToCheckout('CVS')); }
         if (homeDeliveryCheckoutBtn) { homeDeliveryCheckoutBtn.addEventListener('click', () => proceedToCheckout('HOME_DELIVERY')); }
@@ -745,82 +737,6 @@ if (productGrid) {
 });
 </script>
 
-<!--   <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const productGrid = document.getElementById('product-grid');
-    const filterButtons = document.querySelectorAll('#filter-buttons .tab-btn');
-
-    function createProductCard(product) {
-        let specsHtml = '';
-        product.specs.forEach((spec, index) => {
-            const isChecked = index === 0 ? 'checked' : '';
-            specsHtml += `
-                <label class="flex items-center p-1 border rounded-lg cursor-pointer hover:bg-amber-50">
-                    <input type="radio" name="spec_${product.id}" class="h-3 w-3 md:h-4 md:w-4 text-amber-600 border-gray-300 focus:ring-amber-500" value="${spec.id}" data-price="${spec.price}" data-spec-name="${spec.name}" ${isChecked}>
-                    <div class="ml-2 text-gray-700 flex flex-col">
-                        <span class="font-semibold md:font-bold text-xs md:text-sm">${spec.name}</span>
-                        <span class="text-xs md:text-sm font-semibold text-gray-800 ml-1">NT$ ${spec.price}</span>
-                    </div>
-                </label>
-            `;
-        });
-
-        return `
-            <div class="coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}">
-                <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain">
-                <div class="p-3 md:p-4 flex-grow flex flex-col">
-                    <h3 class="text-sm md:text-base font-bold text-amber-800 mb-1 h-14 md:h-16">${product.name}</h3>
-                    <p class="text-gray-600 text-xs md:text-sm leading-5 mb-2">${product.description}</p>
-                    <div class="space-y-1">${specsHtml}</div>
-                    <div class="mt-auto pt-2">
-                        <button class="add-to-cart-btn w-full bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded-lg transition-colors duration-300 text-xs md:text-sm" data-name="${product.name}">加入購物車</button>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-
-    async function initializeShop() {
-        // 【重要修正】加入了 try...catch 來捕捉錯誤
-        try {
-            // 1. 讀取 JSON 檔案
-            const response = await fetch('/products.json');
-            // 如果網路請求失敗 (例如 404 Not Found)，就拋出錯誤
-            if (!response.ok) {
-                throw new Error(`無法讀取商品資料，伺服器回應: ${response.status}`);
-            }
-            const products = await response.json();
-            
-            // 2. 將商品渲染到畫面上
-            productGrid.innerHTML = products.map(createProductCard).join('');
-
-            // 3. 設定篩選按鈕的功能
-            const coffeeCards = document.querySelectorAll('.coffee-card');
-            filterButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    filterButtons.forEach(btn => btn.classList.remove('active'));
-                    button.classList.add('active');
-                    const filter = button.dataset.filter;
-                    coffeeCards.forEach(card => {
-                        const category = card.dataset.category;
-                        if (filter === 'all' || (category && category.includes(filter))) {
-                            card.style.display = 'flex';
-                        } else {
-                            card.style.display = 'none';
-                        }
-                    });
-                });
-            });
-        } catch (error) {
-            console.error('載入商品時發生錯誤:', error);
-            // 在畫面上顯示一個使用者看得懂的錯誤訊息
-            productGrid.innerHTML = '<p class="col-span-full text-center text-red-500">商品載入失敗，請檢查 products.json 檔案是否存在且格式正確，或聯繫管理員。</p>';
-        }
-    }
-
-    initializeShop();
-});
-</script>  -->
     <form name="orders" netlify netlify-honeypot="bot-field" hidden>
   <input type="hidden" name="form-name" value="orders" />
   <p class="hidden">
