@@ -12,89 +12,6 @@
         body { font-family: 'Noto Sans TC', sans-serif; background-color: #FDFBF8; }
         .form-input { appearance: none; border: 1px solid #D1D5DB; border-radius: 0.375rem; padding: 0.75rem 1rem; width: 100%; transition: box-shadow 0.2s, border-color 0.2s; }
         .form-input:focus { outline: none; border-color: #A0522D; box-shadow: 0 0 0 3px rgba(160, 82, 45, 0.2); }
-        .font-noto-serif {
-        font-family: 'Noto Serif TC', serif;
-    }
-    /* ▼▼▼ 新增 modal 的 CSS 樣式 ▼▼▼ */
-    .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background-color: rgba(0, 0, 0, 0.6);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 100;
-    }
-    .modal-content {
-        background-color: white;
-        padding: 10px;
-        border-radius: 8px;
-        width: 95%;
-        height: 90%;
-        max-width: 1024px;
-        display: flex;
-        flex-direction: column;
-    }
-    .modal-iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-    }
-    /* ▲▲▲ 新增到此結束 ▲▲▲ */
-    </style>
-</head>
-<body>
-    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm"><nav class="container mx-auto px-6 py-3"><div>
-    <a href="/coffee/index.html" class="flex items-end gap-1">
-        <img src="/images/New logo.png" alt="竹意軒 Logo" class="h-12 w-auto">
-        <span class="font-noto-serif text-gray-600 text-sm leading-none pb-2">咖啡工坊</span></a></div></nav></header>
-    <main class="container mx-auto px-6 py-12">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
-            <section>
-                <button id="back-btn" class="text-gray-600 hover:text-amber-800 mb-6">&larr; 返回上一步</button>
-                <h2 id="form-title" class="text-3xl font-bold text-gray-800 mb-8">載入中...</h2>
-                <form id="home-delivery-form" style="display: none;" class="space-y-6">
-                    <div><label for="delivery-name" class="block text-sm font-medium text-gray-700 mb-2">收件人姓名</label><input type="text" id="delivery-name" name="name" required class="form-input"></div>
-                    <div><label for="delivery-phone" class="block text-sm font-medium text-gray-700 mb-2">行動電話</label><input type="tel" id="delivery-phone" name="phone" required class="form-input" placeholder="請輸入 09 開頭的 10 位數字"></div>
-                    <div><label for="delivery-email" class="block text-sm font-medium text-gray-700 mb-2">電子郵件 (用於接收訂單通知)</label><input type="email" id="delivery-email" name="email" required class="form-input" placeholder="請輸入有效的 Email 地址"></div>
-                    <div><label for="delivery-address" class="block text-sm font-medium text-gray-700 mb-2">郵寄地址</label><input type="text" id="delivery-address" name="address" required class="form-input"></div></form>
-                <form id="cvs-form" style="display: none;" class="space-y-6"><div><label for="cvs-name" class="block text-sm font-medium text-gray-700 mb-2">取件人姓名</label><input type="text" id="cvs-name" name="name" required class="form-input"></div>
-                    <div><label for="cvs-phone" class="block text-sm font-medium text-gray-700 mb-2">取件人行動電話</label><input type="tel" id="cvs-phone" name="phone" required class="form-input" placeholder="請輸入 09 開頭的 10 位數字"></div>
-                    <div><label for="cvs-email" class="block text-sm font-medium text-gray-700 mb-2">電子郵件 (用於接收訂單通知)</label><input type="email" id="cvs-email" name="email" required class="form-input" placeholder="請輸入有效的 Email 地址"></div>
-                    <div><label class="block text-sm font-medium text-gray-700 mb-2">取貨門市</label><div id="selected-store-info" class="p-4 bg-gray-100 rounded-md text-gray-700 min-h-[50px]">尚未選擇門市</div><button type="button" id="select-store-btn" class="mt-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-bold py-2 px-4 rounded-lg">選擇 7-ELEVEN 門市</button></div>
-                    <div class="border-t pt-4"><label class="block text-sm font-medium text-gray-700 mb-2">付款方式</label><div class="space-y-2"><label class="flex items-center"><input type="radio" name="payment" value="CreditCard" checked class="h-4 w-4 text-amber-600 border-gray-300 focus:ring-amber-500"> <span class="ml-2">信用卡付款</span></label><label class="flex items-center"><input type="radio" name="payment" value="COD" class="h-4 w-4 text-amber-600 border-gray-300 focus:ring-amber-500"> <span class="ml-2">取貨付款</span></label></div></div></form>
-            </section>
-            <aside class="bg-white p-8 rounded-lg shadow-md h-fit"><h3 class="text-2xl font-bold border-b pb-4 mb-6">訂單摘要</h3><div id="summary-items" class="space-y-4 mb-6"></div><div class="border-t pt-4 space-y-3"><div class="flex justify-between"><span>商品小計</span><span id="summary-subtotal">NT$ 0</span></div><div class="flex justify-between"><span>運費</span><span id="summary-shipping">NT$ 0</span></div><div class="flex justify-between font-bold text-xl"><span>總計</span><span id="summary-total">NT$ 0</span></div></div><button id="confirm-order-btn" class="w-full mt-8 bg-amber-800 hover:bg-amber-900 text-white font-bold py-3 px-4 rounded-lg transition-colors">確認訂購</button></aside>
-        </div>
-    </main>
-    
-        <form id="ecpay-map-form" method="POST" action="https://logistics.ecpay.com.tw/Express/map" style="display: none;" target="ecpay-map-iframe">
-        <input type="hidden" name="MerchantID" />
-        <input type="hidden" name="MerchantTradeNo" />
-        <input type="hidden" name="LogisticsType" value="CVS" />
-        <input type="hidden" name="LogisticsSubType" value="UNIMART" />
-        <input type="hidden" name="IsCollection" value="Y" />
-        <input type="hidden" name="ServerReplyURL" />
-        <input type="hidden" name="ClientReplyURL" />
-    </form>
-    
-<!DOCTYPE html>
-<html lang="zh-Hant">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>結帳 - 竹意軒的咖啡工坊</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Noto Sans TC', sans-serif; background-color: #FDFBF8; }
-        .form-input { appearance: none; border: 1px solid #D1D5DB; border-radius: 0.375rem; padding: 0.75rem 1rem; width: 100%; transition: box-shadow 0.2s, border-color 0.2s; }
-        .form-input:focus { outline: none; border-color: #A0522D; box-shadow: 0 0 0 3px rgba(160, 82, 45, 0.2); }
         .font-noto-serif { font-family: 'Noto Serif TC', serif; }
         .modal-overlay {
             position: fixed;
@@ -123,14 +40,21 @@
             height: 100%;
             border: none;
         }
-        .hidden { display: none; } /* 新增一個 .hidden class 來控制顯示/隱藏 */
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm"><nav class="container mx-auto px-6 py-3"><div>
-    <a href="/coffee/index.html" class="flex items-end gap-1">
-        <img src="/images/New logo.png" alt="竹意軒 Logo" class="h-12 w-auto">
-        <span class="font-noto-serif text-gray-600 text-sm leading-none pb-2">咖啡工坊</span></a></div></nav></header>
+    <header class="bg-white/90 backdrop-blur-md sticky top-0 z-50 shadow-sm">
+        <nav class="container mx-auto px-6 py-3">
+            <div>
+                <a href="/coffee/index.html" class="flex items-end gap-1">
+                    <img src="/images/New logo.png" alt="竹意軒 Logo" class="h-12 w-auto">
+                    <span class="font-noto-serif text-gray-600 text-sm leading-none pb-2">咖啡工坊</span>
+                </a>
+            </div>
+        </nav>
+    </header>
+
     <main class="container mx-auto px-6 py-12">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-16">
             <section>
@@ -140,14 +64,26 @@
                     <div><label for="delivery-name" class="block text-sm font-medium text-gray-700 mb-2">收件人姓名</label><input type="text" id="delivery-name" name="name" required class="form-input"></div>
                     <div><label for="delivery-phone" class="block text-sm font-medium text-gray-700 mb-2">行動電話</label><input type="tel" id="delivery-phone" name="phone" required class="form-input" placeholder="請輸入 09 開頭的 10 位數字"></div>
                     <div><label for="delivery-email" class="block text-sm font-medium text-gray-700 mb-2">電子郵件 (用於接收訂單通知)</label><input type="email" id="delivery-email" name="email" required class="form-input" placeholder="請輸入有效的 Email 地址"></div>
-                    <div><label for="delivery-address" class="block text-sm font-medium text-gray-700 mb-2">郵寄地址</label><input type="text" id="delivery-address" name="address" required class="form-input"></div></form>
-                <form id="cvs-form" style="display: none;" class="space-y-6"><div><label for="cvs-name" class="block text-sm font-medium text-gray-700 mb-2">取件人姓名</label><input type="text" id="cvs-name" name="name" required class="form-input"></div>
+                    <div><label for="delivery-address" class="block text-sm font-medium text-gray-700 mb-2">郵寄地址</label><input type="text" id="delivery-address" name="address" required class="form-input"></div>
+                </form>
+                <form id="cvs-form" style="display: none;" class="space-y-6">
+                    <div><label for="cvs-name" class="block text-sm font-medium text-gray-700 mb-2">取件人姓名</label><input type="text" id="cvs-name" name="name" required class="form-input"></div>
                     <div><label for="cvs-phone" class="block text-sm font-medium text-gray-700 mb-2">取件人行動電話</label><input type="tel" id="cvs-phone" name="phone" required class="form-input" placeholder="請輸入 09 開頭的 10 位數字"></div>
                     <div><label for="cvs-email" class="block text-sm font-medium text-gray-700 mb-2">電子郵件 (用於接收訂單通知)</label><input type="email" id="cvs-email" name="email" required class="form-input" placeholder="請輸入有效的 Email 地址"></div>
                     <div><label class="block text-sm font-medium text-gray-700 mb-2">取貨門市</label><div id="selected-store-info" class="p-4 bg-gray-100 rounded-md text-gray-700 min-h-[50px]">尚未選擇門市</div><button type="button" id="select-store-btn" class="mt-2 bg-white border border-gray-300 hover:bg-gray-50 text-gray-800 font-bold py-2 px-4 rounded-lg">選擇 7-ELEVEN 門市</button></div>
-                    <div class="border-t pt-4"><label class="block text-sm font-medium text-gray-700 mb-2">付款方式</label><div class="space-y-2"><label class="flex items-center"><input type="radio" name="payment" value="CreditCard" checked class="h-4 w-4 text-amber-600 border-gray-300 focus:ring-amber-500"> <span class="ml-2">信用卡付款</span></label><label class="flex items-center"><input type="radio" name="payment" value="COD" class="h-4 w-4 text-amber-600 border-gray-300 focus:ring-amber-500"> <span class="ml-2">取貨付款</span></label></div></div></form>
+                    <div class="border-t pt-4"><label class="block text-sm font-medium text-gray-700 mb-2">付款方式</label><div class="space-y-2"><label class="flex items-center"><input type="radio" name="payment" value="CreditCard" checked class="h-4 w-4 text-amber-600 border-gray-300 focus:ring-amber-500"> <span class="ml-2">信用卡付款</span></label><label class="flex items-center"><input type="radio" name="payment" value="COD" class="h-4 w-4 text-amber-600 border-gray-300 focus:ring-amber-500"> <span class="ml-2">取貨付款</span></label></div></div>
+                </form>
             </section>
-            <aside class="bg-white p-8 rounded-lg shadow-md h-fit"><h3 class="text-2xl font-bold border-b pb-4 mb-6">訂單摘要</h3><div id="summary-items" class="space-y-4 mb-6"></div><div class="border-t pt-4 space-y-3"><div class="flex justify-between"><span>商品小計</span><span id="summary-subtotal">NT$ 0</span></div><div class="flex justify-between"><span>運費</span><span id="summary-shipping">NT$ 0</span></div><div class="flex justify-between font-bold text-xl"><span>總計</span><span id="summary-total">NT$ 0</span></div></div><button id="confirm-order-btn" class="w-full mt-8 bg-amber-800 hover:bg-amber-900 text-white font-bold py-3 px-4 rounded-lg transition-colors">確認訂購</button></aside>
+            <aside class="bg-white p-8 rounded-lg shadow-md h-fit">
+                <h3 class="text-2xl font-bold border-b pb-4 mb-6">訂單摘要</h3>
+                <div id="summary-items" class="space-y-4 mb-6"></div>
+                <div class="border-t pt-4 space-y-3">
+                    <div class="flex justify-between"><span>商品小計</span><span id="summary-subtotal">NT$ 0</span></div>
+                    <div class="flex justify-between"><span>運費</span><span id="summary-shipping">NT$ 0</span></div>
+                    <div class="flex justify-between font-bold text-xl"><span>總計</span><span id="summary-total">NT$ 0</span></div>
+                </div>
+                <button id="confirm-order-btn" class="w-full mt-8 bg-amber-800 hover:bg-amber-900 text-white font-bold py-3 px-4 rounded-lg transition-colors">確認訂購</button>
+            </aside>
         </div>
     </main>
     
@@ -155,9 +91,11 @@
         <input type="hidden" name="MerchantID" />
         <input type="hidden" name="MerchantTradeNo" />
         <input type="hidden" name="LogisticsType" value="CVS" />
-        <input type="hidden" name="LogisticsSubType" value="UNIMART" /> <input type="hidden" name="IsCollection" value="Y" />
+        <input type="hidden" name="LogisticsSubType" value="UNIMARTC2C" />
+        <input type="hidden" name="IsCollection" value="Y" />
         <input type="hidden" name="ServerReplyURL" />
-        <input type="hidden" name="ClientReplyURL" /> </form>
+        <input type="hidden" name="ClientReplyURL" />
+    </form>
     
     <div id="map-modal" class="modal-overlay hidden">
         <div class="modal-content">
@@ -220,64 +158,49 @@
         summaryShipping.innerHTML = subtotal >= 1000 ? `NT$ ${shippingFee} (已達免運門檻)` : `NT$ ${shippingFee}`;
         summaryTotal.textContent = `NT$ ${total}`;
 
-
-        // --- 【核心修改】觸發電子地圖 Modal 的邏輯 ---
+        // --- 觸發電子地圖 Modal 的邏輯 ---
         selectStoreBtn.addEventListener('click', () => {
-            // 1. 準備 ECPay 表單需要的資料
             const merchantIDInput = ecpayMapForm.querySelector('input[name="MerchantID"]');
             const merchantTradeNoInput = ecpayMapForm.querySelector('input[name="MerchantTradeNo"]');
             const serverReplyURLInput = ecpayMapForm.querySelector('input[name="ServerReplyURL"]');
             const clientReplyURLInput = ecpayMapForm.querySelector('input[name="ClientReplyURL"]');
 
-            // ❗❗❗ 請務必將 'YOUR_TEST_MERCHANT_ID' 換成您自己的純數字測試代號 ❗❗❗
+            // ❗❗❗ 請務必將 '3002607' 換成您自己的純數字測試或正式特店編號 ❗❗❗
             merchantIDInput.value = '3002607'; 
             merchantTradeNoInput.value = `bamboo${new Date().getTime()}`;
             
-            // ServerReplyURL 指向您的後端 function
             serverReplyURLInput.value = `${window.location.origin}/.netlify/functions/ecpay-map-return`;
-            // ClientReplyURL 指向後端 function (使用者手動關閉地圖時，綠界會導向這裡，但我們的 function 會處理好)
             clientReplyURLInput.value = `${window.location.origin}/.netlify/functions/ecpay-map-return`;
 
-            // 2. 清空 iframe，避免舊內容殘留
             ecpayMapIframe.src = 'about:blank';
-            
-            // 3. 顯示 Modal
             mapModal.classList.remove('hidden');
-            
-            // 4. 提交表單，將 ECPay 地圖載入到 iframe 中
-            // 因為 form 的 target="ecpay-map-iframe"，所以提交後會在 iframe 內開啟
             ecpayMapForm.submit();
         });
 
-        // --- 【核心修改】關閉 Modal 的邏輯 ---
+        // --- 關閉 Modal 的邏輯 ---
         closeModalBtn.addEventListener('click', () => {
             mapModal.classList.add('hidden');
-            // 關閉時也清空 iframe
             ecpayMapIframe.src = 'about:blank';
         });
 
         // --- 監聽從後端函式回傳的門市資料 (postMessage) ---
         window.addEventListener('message', (event) => {
-            // 確認訊息來源與內容是否正確
             if (event.data && event.data.action === 'ecpayStoreSelected') {
                 selectedStore = event.data.store;
-                // 更新 UI 顯示選擇的門市
                 selectedStoreInfoDiv.innerHTML = `<p class="font-bold">${selectedStore.CVSStoreName} (${selectedStore.CVSStoreID})</p><p class="text-sm">${selectedStore.CVSAddress}</p>`;
                 selectedStoreInfoDiv.classList.remove('text-gray-700');
                 selectedStoreInfoDiv.classList.add('text-green-800');
                 
-                // 【核心修改】成功選擇門市後，自動關閉 Modal
                 mapModal.classList.add('hidden');
                 ecpayMapIframe.src = 'about:blank';
             }
         }, false);
     
-        // --- 確認訂購按鈕事件 (此部分邏輯不變) ---
+        // --- 確認訂購按鈕事件 ---
         confirmOrderBtn.addEventListener('click', async () => {
             let isValid = true; 
             let recipientInfo = {};
 
-            // --- 表單驗證 ---
             if (shippingMethod === 'HOME_DELIVERY') {
                 const name = document.getElementById('delivery-name').value.trim();
                 const phone = document.getElementById('delivery-phone').value.trim();
@@ -298,7 +221,6 @@
             }
             if (!isValid) { return; }
 
-            // --- 呼叫後端 Function ---
             confirmOrderBtn.disabled = true;
             confirmOrderBtn.textContent = '訂單處理中...';
 
@@ -321,7 +243,6 @@
                     throw new Error(result.message || '訂單建立失敗');
                 }
 
-                // --- 根據後端回傳結果，執行對應動作 ---
                 if (result.paymentMethod === 'CreditCard') {
                     const form = document.createElement('form');
                     form.method = 'POST';
@@ -345,8 +266,7 @@
                     document.body.appendChild(form);
                     form.submit();
                 } else if (result.paymentMethod === 'COD') {
-                    localStorage.removeItem('cart');
-                    // 注意：localStorage 中沒有 selectedStore，此行可省略或修正
+                    localStorage.removeItem('bamboo_cart');
                     window.location.href = `/coffee/thankyou.html?order=${result.orderNumber}`;
                 }
 
@@ -359,17 +279,5 @@
         });
     });
     </script>
-</body>
-</html>
-    <div id="map-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="text-right mb-2">
-                <button id="close-modal-btn" class="text-2xl font-bold text-gray-500 hover:text-gray-800">&times;</button>
-            </div>
-            <iframe id="ecpay-map-iframe" name="ecpay-map-iframe" class="modal-iframe"></iframe>
-        </div>
-    </div>
-    </body>
-</html>
 </body>
 </html>
