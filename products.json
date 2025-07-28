@@ -175,12 +175,12 @@
       {
         "id": "half-pound",
         "name": "半磅 (熟豆)",
-        "price": 5
+        "price": 30
       },
       {
         "id": "drip-bag-5",
         "name": "濾掛包 (5入)",
-        "price": 5
+        "price": 30
       }
     ]
   }
