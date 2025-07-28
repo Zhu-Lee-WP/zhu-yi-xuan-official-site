@@ -88,7 +88,7 @@ if (!n8nResponse.ok || n8nResult.status !== 'success') {
                     paymentMethod: 'CreditCard',
                     orderData: orderParams,
                     checkMacValue: checkMacValue,
-                    paymentUrl: 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut'
+                    paymentUrl: 'https://payment.ecpay.com.tw/Cashier/AioCheckOut'
                 })
             };
 
