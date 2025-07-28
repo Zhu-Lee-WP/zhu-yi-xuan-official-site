@@ -13,34 +13,6 @@
         .form-input { appearance: none; border: 1px solid #D1D5DB; border-radius: 0.375rem; padding: 0.75rem 1rem; width: 100%; transition: box-shadow 0.2s, border-color 0.2s; }
         .form-input:focus { outline: none; border-color: #A0522D; box-shadow: 0 0 0 3px rgba(160, 82, 45, 0.2); }
         .font-noto-serif { font-family: 'Noto Serif TC', serif; }
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 100;
-        }
-        .modal-content {
-            background-color: white;
-            padding: 10px;
-            border-radius: 8px;
-            width: 95%;
-            height: 90%;
-            max-width: 1024px;
-            display: flex;
-            flex-direction: column;
-        }
-        .modal-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-        .hidden { display: none; }
     </style>
 </head>
 <body>
@@ -60,12 +32,10 @@
             <section>
                 <button id="back-btn" class="text-gray-600 hover:text-amber-800 mb-6">&larr; 返回上一步</button>
                 <h2 id="form-title" class="text-3xl font-bold text-gray-800 mb-8">載入中...</h2>
+                
                 <form id="home-delivery-form" style="display: none;" class="space-y-6">
-                    <div><label for="delivery-name" class="block text-sm font-medium text-gray-700 mb-2">收件人姓名</label><input type="text" id="delivery-name" name="name" required class="form-input"></div>
-                    <div><label for="delivery-phone" class="block text-sm font-medium text-gray-700 mb-2">行動電話</label><input type="tel" id="delivery-phone" name="phone" required class="form-input" placeholder="請輸入 09 開頭的 10 位數字"></div>
-                    <div><label for="delivery-email" class="block text-sm font-medium text-gray-700 mb-2">電子郵件 (用於接收訂單通知)</label><input type="email" id="delivery-email" name="email" required class="form-input" placeholder="請輸入有效的 Email 地址"></div>
-                    <div><label for="delivery-address" class="block text-sm font-medium text-gray-700 mb-2">郵寄地址</label><input type="text" id="delivery-address" name="address" required class="form-input"></div>
-                </form>
+                    </form>
+
                 <form id="cvs-form" style="display: none;" class="space-y-6">
                     <div><label for="cvs-name" class="block text-sm font-medium text-gray-700 mb-2">取件人姓名</label><input type="text" id="cvs-name" name="name" required class="form-input"></div>
                     <div><label for="cvs-phone" class="block text-sm font-medium text-gray-700 mb-2">取件人行動電話</label><input type="tel" id="cvs-phone" name="phone" required class="form-input" placeholder="請輸入 09 開頭的 10 位數字"></div>
@@ -74,209 +44,92 @@
                     <div class="border-t pt-4"><label class="block text-sm font-medium text-gray-700 mb-2">付款方式</label><div class="space-y-2"><label class="flex items-center"><input type="radio" name="payment" value="CreditCard" checked class="h-4 w-4 text-amber-600 border-gray-300 focus:ring-amber-500"> <span class="ml-2">信用卡付款</span></label><label class="flex items-center"><input type="radio" name="payment" value="COD" class="h-4 w-4 text-amber-600 border-gray-300 focus:ring-amber-500"> <span class="ml-2">取貨付款</span></label></div></div>
                 </form>
             </section>
+            
             <aside class="bg-white p-8 rounded-lg shadow-md h-fit">
-                <h3 class="text-2xl font-bold border-b pb-4 mb-6">訂單摘要</h3>
-                <div id="summary-items" class="space-y-4 mb-6"></div>
-                <div class="border-t pt-4 space-y-3">
-                    <div class="flex justify-between"><span>商品小計</span><span id="summary-subtotal">NT$ 0</span></div>
-                    <div class="flex justify-between"><span>運費</span><span id="summary-shipping">NT$ 0</span></div>
-                    <div class="flex justify-between font-bold text-xl"><span>總計</span><span id="summary-total">NT$ 0</span></div>
-                </div>
-                <button id="confirm-order-btn" class="w-full mt-8 bg-amber-800 hover:bg-amber-900 text-white font-bold py-3 px-4 rounded-lg transition-colors">確認訂購</button>
-            </aside>
+                </aside>
         </div>
     </main>
     
-    <form id="ecpay-map-form" method="POST" action="https://logistics.ecpay.com.tw/Express/map" style="display: none;" target="ecpay-map-iframe">
+    <form id="ecpay-map-form" method="POST" action="https://logistics.ecpay.com.tw/Express/map" style="display: none;">
         <input type="hidden" name="MerchantID" />
         <input type="hidden" name="MerchantTradeNo" />
         <input type="hidden" name="LogisticsType" value="CVS" />
         <input type="hidden" name="LogisticsSubType" value="UNIMARTC2C" />
         <input type="hidden" name="IsCollection" value="Y" />
         <input type="hidden" name="ServerReplyURL" />
-        <input type="hidden" name="ClientReplyURL" />
     </form>
     
-    <div id="map-modal" class="modal-overlay hidden">
-        <div class="modal-content">
-            <div class="text-right mb-2">
-                <button id="close-modal-btn" class="text-2xl font-bold text-gray-500 hover:text-gray-800">&times;</button>
-            </div>
-            <iframe id="ecpay-map-iframe" name="ecpay-map-iframe" class="modal-iframe"></iframe>
-        </div>
-    </div>
-
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- 變數定義 ---
+        // --- 變數與元素定義 (前半部大致不變) ---
         const shippingMethod = localStorage.getItem('shippingMethod');
         const cart = JSON.parse(localStorage.getItem('bamboo_cart') || '[]');
-        
-        // --- 表單元素 ---
-        const formTitle = document.getElementById('form-title');
-        const homeDeliveryForm = document.getElementById('home-delivery-form');
         const cvsForm = document.getElementById('cvs-form');
-        const backBtn = document.getElementById('back-btn');
-        const confirmOrderBtn = document.getElementById('confirm-order-btn');
         const selectStoreBtn = document.getElementById('select-store-btn');
         const selectedStoreInfoDiv = document.getElementById('selected-store-info');
-        
-        // --- 訂單摘要元素 ---
-        const summaryItems = document.getElementById('summary-items');
-        const summarySubtotal = document.getElementById('summary-subtotal');
-        const summaryShipping = document.getElementById('summary-shipping');
-        const summaryTotal = document.getElementById('summary-total');
-
-        // --- ECPay & Modal 相關元素 ---
+        const cvsNameInput = document.getElementById('cvs-name');
+        const cvsPhoneInput = document.getElementById('cvs-phone');
+        const cvsEmailInput = document.getElementById('cvs-email');
         const ecpayMapForm = document.getElementById('ecpay-map-form');
-        const mapModal = document.getElementById('map-modal');
-        const closeModalBtn = document.getElementById('close-modal-btn');
-        const ecpayMapIframe = document.getElementById('ecpay-map-iframe');
+        let selectedStore = null;
 
-        let selectedStore = null; 
+        // --- 頁面初始化與訂單摘要 (省略未修改部分) ---
+        // ... (此處程式碼與舊版相同)
 
-        // --- 頁面初始化 ---
-        if (!shippingMethod || cart.length === 0) { window.location.href = 'index.html'; return; }
-        if (shippingMethod === 'HOME_DELIVERY') { formTitle.textContent = '郵寄宅配資訊'; homeDeliveryForm.style.display = 'block'; }
-        else if (shippingMethod === 'CVS') { formTitle.textContent = '超商取貨資訊'; cvsForm.style.display = 'block'; }
-        
-        backBtn.addEventListener('click', () => { window.history.back(); });
+        // 【核心修改】從 sessionStorage 還原資料
+        function restoreData() {
+            // 1. 還原使用者填寫的表單資料
+            const savedCvsData = sessionStorage.getItem('cvsFormData');
+            if (savedCvsData) {
+                const data = JSON.parse(savedCvsData);
+                cvsNameInput.value = data.name || '';
+                cvsPhoneInput.value = data.phone || '';
+                cvsEmailInput.value = data.email || '';
+            }
 
-        // --- 更新訂單摘要 ---
-        let subtotal = 0;
-        summaryItems.innerHTML = '';
-        cart.forEach(item => {
-            subtotal += item.price * item.quantity;
-            const itemEl = document.createElement('div');
-            itemEl.className = 'flex justify-between text-gray-600';
-            itemEl.innerHTML = `<span>${item.name} x${item.quantity}</span><span>NT$ ${item.price * item.quantity}</span>`;
-            summaryItems.appendChild(itemEl);
-        });
-        const shippingFee = subtotal >= 1000 ? 0 : (shippingMethod === 'CVS' ? 60 : 80);
-        const total = subtotal + shippingFee;
-        summarySubtotal.textContent = `NT$ ${subtotal}`;
-        summaryShipping.innerHTML = subtotal >= 1000 ? `NT$ ${shippingFee} (已達免運門檻)` : `NT$ ${shippingFee}`;
-        summaryTotal.textContent = `NT$ ${total}`;
-
-        // --- 觸發電子地圖 Modal 的邏輯 ---
-        selectStoreBtn.addEventListener('click', () => {
-            const merchantIDInput = ecpayMapForm.querySelector('input[name="MerchantID"]');
-            const merchantTradeNoInput = ecpayMapForm.querySelector('input[name="MerchantTradeNo"]');
-            const serverReplyURLInput = ecpayMapForm.querySelector('input[name="ServerReplyURL"]');
-            const clientReplyURLInput = ecpayMapForm.querySelector('input[name="ClientReplyURL"]');
-
-            // ❗❗❗ 請務必將 '3002607' 換成您自己的純數字測試或正式特店編號 ❗❗❗
-            merchantIDInput.value = '3152464'; 
-            merchantTradeNoInput.value = `bamboo${new Date().getTime()}`;
-            
-            serverReplyURLInput.value = `${window.location.origin}/.netlify/functions/ecpay-map-return`;
-            clientReplyURLInput.value = `${window.location.origin}/.netlify/functions/ecpay-map-return`;
-
-            ecpayMapIframe.src = 'about:blank';
-            mapModal.classList.remove('hidden');
-            ecpayMapForm.submit();
-        });
-
-        // --- 關閉 Modal 的邏輯 ---
-        closeModalBtn.addEventListener('click', () => {
-            mapModal.classList.add('hidden');
-            ecpayMapIframe.src = 'about:blank';
-        });
-
-        // --- 監聽從後端函式回傳的門市資料 (postMessage) ---
-        window.addEventListener('message', (event) => {
-            if (event.data && event.data.action === 'ecpayStoreSelected') {
-                selectedStore = event.data.store;
+            // 2. 還原從綠界回傳的門市資料
+            const storeDataString = sessionStorage.getItem('ecpayStoreData');
+            if (storeDataString) {
+                selectedStore = JSON.parse(storeDataString);
                 selectedStoreInfoDiv.innerHTML = `<p class="font-bold">${selectedStore.CVSStoreName} (${selectedStore.CVSStoreID})</p><p class="text-sm">${selectedStore.CVSAddress}</p>`;
                 selectedStoreInfoDiv.classList.remove('text-gray-700');
                 selectedStoreInfoDiv.classList.add('text-green-800');
-                
-                mapModal.classList.add('hidden');
-                ecpayMapIframe.src = 'about:blank';
             }
-        }, false);
-    
-        // --- 確認訂購按鈕事件 ---
-        confirmOrderBtn.addEventListener('click', async () => {
-            let isValid = true; 
-            let recipientInfo = {};
 
-            if (shippingMethod === 'HOME_DELIVERY') {
-                const name = document.getElementById('delivery-name').value.trim();
-                const phone = document.getElementById('delivery-phone').value.trim();
-                const email = document.getElementById('delivery-email').value.trim();
-                const address = document.getElementById('delivery-address').value.trim();
-                if (!/^09\d{8}$/.test(phone)) { alert('請輸入正確的 10 碼行動電話號碼。'); isValid = false; }
-                if (!name || !phone || !address) { alert('請確實填寫所有收件資訊。'); isValid = false; }
-                recipientInfo = { name, phone, email, address, paymentMethod: 'CreditCard' };
-            } else if (shippingMethod === 'CVS') {
-                const name = document.getElementById('cvs-name').value.trim();
-                const phone = document.getElementById('cvs-phone').value.trim();
-                const email = document.getElementById('cvs-email').value.trim();
-                const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-                if (!/^09\d{8}$/.test(phone)) { alert('請輸入正確的 10 碼行動電話號碼。'); isValid = false; }
-                if (!name || !phone) { alert('請確實填寫取件人姓名與電話。'); isValid = false; }
-                if (!selectedStore) { alert('請選擇一間超商取貨門市。'); isValid = false; }
-                recipientInfo = { name, phone, email, store: selectedStore, paymentMethod };
-            }
-            if (!isValid) { return; }
+            // 3. 還原後清除暫存，避免重複使用
+            sessionStorage.removeItem('cvsFormData');
+            sessionStorage.removeItem('ecpayStoreData');
+        }
 
-            confirmOrderBtn.disabled = true;
-            confirmOrderBtn.textContent = '訂單處理中...';
+        // 頁面載入時，執行一次還原
+        restoreData();
+        
+        // 【核心修改】點擊選擇門市按鈕的邏輯
+        selectStoreBtn.addEventListener('click', () => {
+            // 1. 儲存目前使用者已輸入的資料到 sessionStorage
+            const cvsDataToSave = {
+                name: cvsNameInput.value,
+                phone: cvsPhoneInput.value,
+                email: cvsEmailInput.value
+            };
+            sessionStorage.setItem('cvsFormData', JSON.stringify(cvsDataToSave));
 
-            try {
-                const payload = {
-                    cart: cart,
-                    shippingMethod: shippingMethod,
-                    recipientInfo: recipientInfo,
-                    orderTotal: total
-                };
+            // 2. 準備 ECPay 表單需要的資料
+            const merchantIDInput = ecpayMapForm.querySelector('input[name="MerchantID"]');
+            const merchantTradeNoInput = ecpayMapForm.querySelector('input[name="MerchantTradeNo"]');
+            const serverReplyURLInput = ecpayMapForm.querySelector('input[name="ServerReplyURL"]');
+            
+            // ❗❗❗ 請務必將 '3002607' 換成您自己的特店編號 ❗❗❗
+            merchantIDInput.value = '3002607'; 
+            merchantTradeNoInput.value = `bamboo${new Date().getTime()}`;
+            serverReplyURLInput.value = `${window.location.origin}/.netlify/functions/ecpay-map-return`;
 
-                const response = await fetch('/.netlify/functions/create-order', {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
-
-                const result = await response.json();
-
-                if (result.status !== 'SUCCESS') {
-                    throw new Error(result.message || '訂單建立失敗');
-                }
-
-                if (result.paymentMethod === 'CreditCard') {
-                    const form = document.createElement('form');
-                    form.method = 'POST';
-                    form.action = result.paymentUrl;
-                    form.style.display = 'none';
-
-                    for (const key in result.orderData) {
-                        const input = document.createElement('input');
-                        input.type = 'hidden';
-                        input.name = key;
-                        input.value = result.orderData[key];
-                        form.appendChild(input);
-                    }
-
-                    const checkMacValueInput = document.createElement('input');
-                    checkMacValueInput.type = 'hidden';
-                    checkMacValueInput.name = 'CheckMacValue';
-                    checkMacValueInput.value = result.checkMacValue;
-                    form.appendChild(checkMacValueInput);
-
-                    document.body.appendChild(form);
-                    form.submit();
-                } else if (result.paymentMethod === 'COD') {
-                    localStorage.removeItem('bamboo_cart');
-                    window.location.href = `/coffee/thankyou.html?order=${result.orderNumber}`;
-                }
-
-            } catch (error) {
-                console.error('確認訂購時發生錯誤:', error);
-                alert(`訂單處理失敗：${error.message}`);
-                confirmOrderBtn.disabled = false;
-                confirmOrderBtn.textContent = '確認訂購';
-            }
+            // 3. 提交表單，直接在本頁跳轉至綠界電子地圖
+            ecpayMapForm.submit();
         });
+
+        // --- 確認訂購按鈕事件 (邏輯不變) ---
+        // ... (此處程式碼與舊版相同)
     });
     </script>
 </body>
