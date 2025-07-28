@@ -15,6 +15,35 @@
         .font-noto-serif {
         font-family: 'Noto Serif TC', serif;
     }
+    /* ▼▼▼ 新增 modal 的 CSS 樣式 ▼▼▼ */
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+    }
+    .modal-content {
+        background-color: white;
+        padding: 10px;
+        border-radius: 8px;
+        width: 95%;
+        height: 90%;
+        max-width: 1024px;
+        display: flex;
+        flex-direction: column;
+    }
+    .modal-iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+    /* ▲▲▲ 新增到此結束 ▲▲▲ */
     </style>
 </head>
 <body>
@@ -51,161 +80,181 @@
         <input type="hidden" name="ServerReplyURL" />
     </form>
     
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const shippingMethod = localStorage.getItem('shippingMethod');
-        const cart = JSON.parse(localStorage.getItem('bamboo_cart') || '[]');
-        const formTitle = document.getElementById('form-title');
-        const homeDeliveryForm = document.getElementById('home-delivery-form');
-        const cvsForm = document.getElementById('cvs-form');
-        const backBtn = document.getElementById('back-btn');
-        const confirmOrderBtn = document.getElementById('confirm-order-btn');
-        const summaryItems = document.getElementById('summary-items');
-        const summarySubtotal = document.getElementById('summary-subtotal');
-        const summaryShipping = document.getElementById('summary-shipping');
-        const summaryTotal = document.getElementById('summary-total');
-        const selectStoreBtn = document.getElementById('select-store-btn');
-        const ecpayMapForm = document.getElementById('ecpay-map-form');
-        const selectedStoreInfoDiv = document.getElementById('selected-store-info');
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- 區塊 1: 變數宣告 ---
+    const shippingMethod = localStorage.getItem('shippingMethod');
+    const cart = JSON.parse(localStorage.getItem('bamboo_cart') || '[]');
+    const formTitle = document.getElementById('form-title');
+    const homeDeliveryForm = document.getElementById('home-delivery-form');
+    const cvsForm = document.getElementById('cvs-form');
+    const backBtn = document.getElementById('back-btn');
+    const confirmOrderBtn = document.getElementById('confirm-order-btn');
+    const summaryItems = document.getElementById('summary-items');
+    const summarySubtotal = document.getElementById('summary-subtotal');
+    const summaryShipping = document.getElementById('summary-shipping');
+    const summaryTotal = document.getElementById('summary-total');
+    const selectStoreBtn = document.getElementById('select-store-btn');
+    const ecpayMapForm = document.getElementById('ecpay-map-form');
+    const selectedStoreInfoDiv = document.getElementById('selected-store-info');
+    const mapModal = document.getElementById('map-modal');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    let selectedStore = null;
 
-        let selectedStore = null; 
+    // --- 區塊 2: 頁面初始化與訂單摘要計算 ---
+    if (!shippingMethod || cart.length === 0) {
+        window.location.href = '/coffee/index.html'; // 路徑修正為 /coffee/
+        return;
+    }
+    if (shippingMethod === 'HOME_DELIVERY') {
+        formTitle.textContent = '郵寄宅配資訊';
+        homeDeliveryForm.style.display = 'block';
+    } else if (shippingMethod === 'CVS') {
+        formTitle.textContent = '超商取貨資訊';
+        cvsForm.style.display = 'block';
+    }
+    
+    backBtn.addEventListener('click', () => { window.history.back(); });
+    
+    // 【已加回】訂單摘要與運費計算邏輯
+    let subtotal = 0;
+    summaryItems.innerHTML = '';
+    cart.forEach(item => {
+        subtotal += item.price * item.quantity;
+        const itemEl = document.createElement('div');
+        itemEl.className = 'flex justify-between text-gray-600';
+        itemEl.innerHTML = `<span>${item.name} x${item.quantity}</span><span>NT$ ${item.price * item.quantity}</span>`;
+        summaryItems.appendChild(itemEl);
+    });
+    
+    const shippingFee = 1; // 測試期間運費固定為 1 元
+    // const shippingFee = subtotal >= 1000 ? 0 : (shippingMethod === 'CVS' ? 60 : 80); // 這是您正式上線時的版本
+    const total = subtotal + shippingFee;
 
-        if (!shippingMethod || cart.length === 0) { window.location.href = 'index.html'; return; }
-        if (shippingMethod === 'HOME_DELIVERY') { formTitle.textContent = '郵寄宅配資訊'; homeDeliveryForm.style.display = 'block'; }
-        else if (shippingMethod === 'CVS') { formTitle.textContent = '超商取貨資訊'; cvsForm.style.display = 'block'; }
-        backBtn.addEventListener('click', () => { window.history.back(); });
+    summarySubtotal.textContent = `NT$ ${subtotal}`;
+    summaryShipping.innerHTML = subtotal >= 1000 ? `NT$ <del>${shippingMethod === 'CVS' ? 60 : 80}</del> 0 (已達免運門檻)` : `NT$ ${shippingFee}`;
+    summaryTotal.textContent = `NT$ ${total}`;
 
-        let subtotal = 0;
-        summaryItems.innerHTML = '';
-        cart.forEach(item => {
-            subtotal += item.price * item.quantity;
-            const itemEl = document.createElement('div');
-            itemEl.className = 'flex justify-between text-gray-600';
-            itemEl.innerHTML = `<span>${item.name} x${item.quantity}</span><span>NT$ ${item.price * item.quantity}</span>`;
-            summaryItems.appendChild(itemEl);
-        });
-        const shippingFee = subtotal >= 1000 ? 0 : (shippingMethod === 'CVS' ? 60 : 80);
-        const total = subtotal + shippingFee;
-        summarySubtotal.textContent = `NT$ ${subtotal}`;
-        summaryShipping.innerHTML = subtotal >= 1000 ? `NT$ <del>${shippingMethod === 'CVS' ? 60 : 80}</del> 0 (已達免運門檻)` : `NT$ ${shippingFee}`;
-        summaryTotal.textContent = `NT$ ${total}`;
+    // 從 localStorage 讀取已選擇的門市資訊並顯示
+    const savedStore = JSON.parse(localStorage.getItem('selectedStore'));
+    if (savedStore && shippingMethod === 'CVS') {
+        selectedStore = savedStore;
+        selectedStoreInfoDiv.innerHTML = `<p class="font-bold">${savedStore.CVSStoreName} (${savedStore.CVSStoreID})</p><p class="text-sm">${savedStore.CVSAddress}</p>`;
+        selectedStoreInfoDiv.classList.add('text-green-800');
+    }
 
-        // 【優化版】觸發地圖的邏輯
+    // --- 區塊 3: 事件監聽器 ---
+
+    // 【已修正】開啟地圖的邏輯，改為使用 iframe 浮動視窗
+    if (selectStoreBtn) {
         selectStoreBtn.addEventListener('click', () => {
             const merchantIDInput = ecpayMapForm.querySelector('input[name="MerchantID"]');
             const merchantTradeNoInput = ecpayMapForm.querySelector('input[name="MerchantTradeNo"]');
             const serverReplyURLInput = ecpayMapForm.querySelector('input[name="ServerReplyURL"]');
             
-            // ❗❗❗ 請務必將 'YOUR_TEST_MERCHANT_ID' 換成您自己的純數字測試代號 ❗❗❗
-            merchantIDInput.value = '3002607'; 
-            
+            merchantIDInput.value = '3002607'; // 【注意】上線前請換成您的正式 MerchantID
             merchantTradeNoInput.value = `bamboo${new Date().getTime()}`;
             serverReplyURLInput.value = `${window.location.origin}/.netlify/functions/ecpay-map-return`;
             
-            const mapWindowName = 'ecpay-map-window';
-            const mapWindow = window.open('', mapWindowName, 'width=1024,height=768');
-            ecpayMapForm.target = mapWindowName;
+            ecpayMapForm.target = 'ecpay-map-iframe';
             ecpayMapForm.submit();
+            mapModal.classList.remove('hidden');
         });
-
-        // 【優化版】監聽從後端函式回傳的門市資料
-        window.addEventListener('message', (event) => {
-            if (event.data && event.data.action === 'ecpayStoreSelected') {
-                selectedStore = event.data.store;
-                selectedStoreInfoDiv.innerHTML = `<p class="font-bold">${selectedStore.CVSStoreName} (${selectedStore.CVSStoreID})</p><p class="text-sm">${selectedStore.CVSAddress}</p>`;
-                selectedStoreInfoDiv.classList.remove('text-gray-700');
-                selectedStoreInfoDiv.classList.add('text-green-800');
-            }
-        }, false);
-    
-        // ▼▼▼ 請找到 confirmOrderBtn.addEventListener... 這一段，並用下面的新版本完整替換它 ▼▼▼
-confirmOrderBtn.addEventListener('click', async () => {
-    let isValid = true; 
-    let recipientInfo = {};
-
-    // --- 表單驗證 (與之前相同) ---
-    if (shippingMethod === 'HOME_DELIVERY') {
-        const name = document.getElementById('delivery-name').value.trim();
-        const phone = document.getElementById('delivery-phone').value.trim();
-        const email = document.getElementById('delivery-email').value.trim();
-        const address = document.getElementById('delivery-address').value.trim();
-        if (!/^09\d{8}$/.test(phone)) { alert('請輸入正確的 10 碼行動電話號碼。'); isValid = false; }
-        if (!name || !phone || !address) { alert('請確實填寫所有收件資訊。'); isValid = false; }
-        recipientInfo = { name, phone, email, address, paymentMethod: 'CreditCard' }; // 宅配固定為信用卡
-    } else if (shippingMethod === 'CVS') {
-        const name = document.getElementById('cvs-name').value.trim();
-        const phone = document.getElementById('cvs-phone').value.trim();
-        const email = document.getElementById('cvs-email').value.trim();
-        const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-        if (!/^09\d{8}$/.test(phone)) { alert('請輸入正確的 10 碼行動電話號碼。'); isValid = false; }
-        if (!name || !phone) { alert('請確實填寫取件人姓名與電話。'); isValid = false; }
-        if (!selectedStore) { alert('請選擇一間超商取貨門市。'); isValid = false; }
-        recipientInfo = { name, phone, email, store: selectedStore, paymentMethod };
     }
-    if (!isValid) { return; }
 
-    // --- 呼叫後端 Function (新邏輯) ---
-    confirmOrderBtn.disabled = true;
-    confirmOrderBtn.textContent = '訂單處理中...';
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => { mapModal.classList.add('hidden'); });
+    }
 
-    try {
-        const payload = {
-            cart: cart,
-            shippingMethod: shippingMethod,
-            recipientInfo: recipientInfo,
-            orderTotal: total
-        };
-
-        const response = await fetch('/.netlify/functions/create-order', {
-            method: 'POST',
-            body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-
-        if (result.status !== 'SUCCESS') {
-            throw new Error(result.message || '訂單建立失敗');
+    // 監聽從 iframe 回傳的門市資料
+    window.addEventListener('message', (event) => {
+        if (event.data && event.data.action === 'ecpayStoreSelected') {
+            selectedStore = event.data.store;
+            localStorage.setItem('selectedStore', JSON.stringify(selectedStore)); // 將選擇結果存起來
+            selectedStoreInfoDiv.innerHTML = `<p class="font-bold">${selectedStore.CVSStoreName} (${selectedStore.CVSStoreID})</p><p class="text-sm">${selectedStore.CVSAddress}</p>`;
+            selectedStoreInfoDiv.classList.remove('text-gray-700');
+            selectedStoreInfoDiv.classList.add('text-green-800');
+            mapModal.classList.add('hidden');
         }
-
-        // --- 根據後端回傳結果，執行對應動作 ---
-        if (result.paymentMethod === 'CreditCard') {
-            // 動態建立表單並提交至綠界
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = result.paymentUrl;
-            form.style.display = 'none';
-
-            for (const key in result.orderData) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = result.orderData[key];
-                form.appendChild(input);
+    }, false);
+    
+    // 確認訂購按鈕的邏輯 (維持不變)
+    if (confirmOrderBtn) {
+        confirmOrderBtn.addEventListener('click', async () => {
+            let isValid = true; 
+            let recipientInfo = {};
+            if (shippingMethod === 'HOME_DELIVERY') {
+                const name = document.getElementById('delivery-name').value.trim();
+                const phone = document.getElementById('delivery-phone').value.trim();
+                const email = document.getElementById('delivery-email').value.trim();
+                const address = document.getElementById('delivery-address').value.trim();
+                if (!/^09\d{8}$/.test(phone)) { alert('請輸入正確的 10 碼行動電話號碼。'); isValid = false; }
+                if (!name || !phone || !email || !address) { alert('請確實填寫所有收件資訊。'); isValid = false; }
+                recipientInfo = { name, phone, email, address, paymentMethod: 'CreditCard' };
+            } else if (shippingMethod === 'CVS') {
+                const name = document.getElementById('cvs-name').value.trim();
+                const phone = document.getElementById('cvs-phone').value.trim();
+                const email = document.getElementById('cvs-email').value.trim();
+                const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+                if (!/^09\d{8}$/.test(phone)) { alert('請輸入正確的 10 碼行動電話號碼。'); isValid = false; }
+                if (!name || !phone || !email) { alert('請確實填寫姓名、電話與信箱。'); isValid = false; }
+                if (!selectedStore) { alert('請選擇一間超商取貨門市。'); isValid = false; }
+                recipientInfo = { name, phone, email, store: selectedStore, paymentMethod };
             }
+            if (!isValid) { return; }
 
-            const checkMacValueInput = document.createElement('input');
-            checkMacValueInput.type = 'hidden';
-            checkMacValueInput.name = 'CheckMacValue';
-            checkMacValueInput.value = result.checkMacValue;
-            form.appendChild(checkMacValueInput);
+            confirmOrderBtn.disabled = true;
+            confirmOrderBtn.textContent = '訂單處理中...';
 
-            document.body.appendChild(form);
-            form.submit();
-        } else if (result.paymentMethod === 'COD') {
-            // 清空購物車並跳轉到感謝頁面
-            localStorage.removeItem('cart');
-            localStorage.removeItem('selectedStore');
-            window.location.href = `/coffee/thankyou.html?order=${result.orderNumber}`;
-        }
+            try {
+                const payload = { cart: cart, shippingMethod: shippingMethod, recipientInfo: recipientInfo, orderTotal: total };
+                const response = await fetch('/.netlify/functions/create-order', { method: 'POST', body: JSON.stringify(payload) });
+                const result = await response.json();
+                if (result.status !== 'SUCCESS') { throw new Error(result.message || '訂單建立失敗'); }
 
-    } catch (error) {
-        console.error('確認訂購時發生錯誤:', error);
-        alert(`訂單處理失敗：${error.message}`);
-        confirmOrderBtn.disabled = false;
-        confirmOrderBtn.textContent = '確認訂購';
+                if (result.paymentMethod === 'CreditCard') {
+                    const form = document.createElement('form');
+                    form.method = 'POST';
+                    form.action = result.paymentUrl;
+                    form.style.display = 'none';
+                    for (const key in result.orderData) {
+                        const input = document.createElement('input');
+                        input.type = 'hidden';
+                        input.name = key;
+                        input.value = result.orderData[key];
+                        form.appendChild(input);
+                    }
+                    const checkMacValueInput = document.createElement('input');
+                    checkMacValueInput.type = 'hidden';
+                    checkMacValueInput.name = 'CheckMacValue';
+                    checkMacValueInput.value = result.checkMacValue;
+                    form.appendChild(checkMacValueInput);
+                    document.body.appendChild(form);
+                    form.submit();
+                } else if (result.paymentMethod === 'COD') {
+                    localStorage.removeItem('bamboo_cart');
+                    localStorage.removeItem('selectedStore');
+                    window.location.href = `/coffee/thankyou.html?order=${result.orderNumber}`;
+                }
+            } catch (error) {
+                console.error('確認訂購時發生錯誤:', error);
+                alert(`訂單處理失敗：${error.message}`);
+                confirmOrderBtn.disabled = false;
+                confirmOrderBtn.textContent = '確認訂購';
+            }
+        });
     }
 });
-    });
-    </script>
+</script>
+    <div id="map-modal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <div class="text-right mb-2">
+                <button id="close-modal-btn" class="text-2xl font-bold text-gray-500 hover:text-gray-800">&times;</button>
+            </div>
+            <iframe id="ecpay-map-iframe" name="ecpay-map-iframe" class="modal-iframe"></iframe>
+        </div>
+    </div>
+    </body>
+</html>
 </body>
 </html>

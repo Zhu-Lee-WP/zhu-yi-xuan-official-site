@@ -21,7 +21,7 @@ exports.handler = async (event, context) => {
             store: ${JSON.stringify(storeData)}
           };
           // 使用 postMessage 將資料「喊話」給開啟此視窗的父視窗
-          window.opener.postMessage(message, '*');
+          window.parent.postMessage(message, '*');
           // 關閉自己
           window.close();
         };
