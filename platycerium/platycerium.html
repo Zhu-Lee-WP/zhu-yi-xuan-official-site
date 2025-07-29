@@ -494,6 +494,44 @@
                 </div>
             </div>
         </section>
+        <section id="video-guide" class="bg-white py-6 md:py-8">
+    <div class="container mx-auto px-6 text-center">
+        <h2 class="text-3xl font-bold text-center mb-2 text-gray-800">鹿角影像</h2>
+        <p class="text-center text-gray-500 mb-10">觀看影片，更了解鹿角蕨的上板與照護技巧</p>
+        
+        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            
+            <a href="#" class="open-video-btn block relative rounded-lg overflow-hidden shadow-lg card-hover" data-youtube-id="-rGBVpfNngY">
+                <img src="https://img.youtube.com/vi/-rGBVpfNngY/maxresdefault.jpg" alt="鹿角蕨上板教學影片封面" class="w-full aspect-video object-cover">
+                <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <svg class="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                </div>
+                <div class="absolute bottom-0 left-0 bg-black/50 text-white text-sm p-2 w-full">鹿角蕨上板示範</div>
+            </a>
+
+            <a href="#" class="open-video-btn block relative rounded-lg overflow-hidden shadow-lg card-hover" data-youtube-id="6wXAnZiMWPs"> <img src="/images/AR sporeling.jpg" alt="影片二封面" class="w-full aspect-video object-cover">
+                <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <svg class="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                </div>
+                <div class="absolute bottom-0 left-0 bg-black/50 text-white text-sm p-2 w-full">AR sporeling</div>
+            </a>
+
+            <a href="#" class="open-video-btn block relative rounded-lg overflow-hidden shadow-lg card-hover" data-youtube-id="cf1UM6iSJD8"> <img src="/images/亞猴.jpg" alt="影片三封面" class="w-full aspect-video object-cover">
+                <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <svg class="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                </div>
+                <div class="absolute bottom-0 left-0 bg-black/50 text-white text-sm p-2 w-full">亞洲猴腦鹿角蕨</div>
+            </a>
+
+        </div>
+    </div>
+</section>
+<div id="video-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+    <div class="bg-black w-full max-w-4xl aspect-video relative">
+        <button id="close-video-btn" class="absolute -top-10 right-0 text-white text-4xl hover:text-gray-300">&times;</button>
+        <div id="youtube-player-container" class="w-full h-full"></div>
+    </div>
+</div>
 
        <section id="connect" class="bg-white py-12 md:py-16">
     <div class="container mx-auto px-6">
@@ -565,44 +603,7 @@
 </section>
 
     </main>
-    <section id="video-guide" class="bg-white py-6 md:py-8">
-    <div class="container mx-auto px-6 text-center">
-        <h2 class="text-3xl font-bold text-center mb-2 text-gray-800">鹿角影像</h2>
-        <p class="text-center text-gray-500 mb-10">觀看影片，更了解鹿角蕨的上板與照護技巧</p>
-        
-        <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-            
-            <a href="#" class="open-video-btn block relative rounded-lg overflow-hidden shadow-lg card-hover" data-youtube-id="-rGBVpfNngY">
-                <img src="https://img.youtube.com/vi/-rGBVpfNngY/maxresdefault.jpg" alt="鹿角蕨上板教學影片封面" class="w-full aspect-video object-cover">
-                <div class="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <svg class="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                </div>
-                <div class="absolute bottom-0 left-0 bg-black/50 text-white text-sm p-2 w-full">鹿角蕨上板示範</div>
-            </a>
-
-            <a href="#" class="open-video-btn block relative rounded-lg overflow-hidden shadow-lg card-hover" data-youtube-id="6wXAnZiMWPs"> <img src="/images/AR sporeling.jpg" alt="影片二封面" class="w-full aspect-video object-cover">
-                <div class="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <svg class="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                </div>
-                <div class="absolute bottom-0 left-0 bg-black/50 text-white text-sm p-2 w-full">AR sporeling</div>
-            </a>
-
-            <a href="#" class="open-video-btn block relative rounded-lg overflow-hidden shadow-lg card-hover" data-youtube-id="cf1UM6iSJD8"> <img src="/images/亞猴.jpg" alt="影片三封面" class="w-full aspect-video object-cover">
-                <div class="absolute inset-0 flex items-center justify-center bg-black/30">
-                    <svg class="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
-                </div>
-                <div class="absolute bottom-0 left-0 bg-black/50 text-white text-sm p-2 w-full">亞洲猴腦鹿角蕨</div>
-            </a>
-
-        </div>
-    </div>
-</section>
-<div id="video-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-    <div class="bg-black w-full max-w-4xl aspect-video relative">
-        <button id="close-video-btn" class="absolute -top-10 right-0 text-white text-4xl hover:text-gray-300">&times;</button>
-        <div id="youtube-player-container" class="w-full h-full"></div>
-    </div>
-</div>
+    
 
     <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-6 text-center">
