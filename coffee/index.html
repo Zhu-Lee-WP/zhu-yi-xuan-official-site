@@ -534,31 +534,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function saveCart() { localStorage.setItem('bamboo_cart', JSON.stringify(cart)); }
 
-    function renderCartItems() {
-        if (!cartItemsContainer) return;
-        cartItemsContainer.innerHTML = '';
-        if (cart.length === 0) {
-            cartItemsContainer.innerHTML = '<p class="text-gray-500">您的購物車是空的。</p>';
-            cartCountEls.forEach(el => el.classList.add('hidden'));
-            if (menuCartDot) menuCartDot.classList.add('hidden');
-            return;
-        }
-        let totalItems = 0;
-        cart.forEach(item => {
-            totalItems += item.quantity;
-            const itemEl = document.createElement('div');
-            itemEl.className = 'flex justify-between items-center mb-4 p-2 border-b';
-            itemEl.innerHTML = `<div class="w-3/4"><p class="font-bold">${item.name}</p><p class="text-sm text-gray-600">NT$ ${item.price} x ${item.quantity}</p></div><div class="w-1/4 text-right"><button class="remove-from-cart-btn text-red-500 hover:text-red-700 text-sm" data-id="${item.id}">移除</button></div>`;
-            cartItemsContainer.appendChild(itemEl);
-        });
-        if (totalItems > 0) {
-            cartCountEls.forEach(el => { el.textContent = totalItems; el.classList.remove('hidden'); });
-            if (menuCartDot) menuCartDot.classList.remove('hidden');
-        } else {
-            cartCountEls.forEach(el => el.classList.add('hidden'));
-            if (menuCartDot) menuCartDot.classList.add('hidden');
-        }
+function renderCartItems() {
+    if (!cartItemsContainer) return;
+    cartItemsContainer.innerHTML = '';
+
+    if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p class="text-gray-500">您的購物車是空的。</p>';
+        cartCountEls.forEach(el => el.classList.add('hidden'));
+        if (menuCartDot) menuCartDot.classList.add('hidden');
+        return;
     }
+
+    let totalItems = 0;
+    cart.forEach(item => {
+        totalItems += item.quantity;
+        const itemEl = document.createElement('div');
+        itemEl.className = 'flex justify-between items-center mb-4 p-2 border-b';
+
+        // ▼▼▼【核心修改】這是新的 HTML 結構 ▼▼▼
+        itemEl.innerHTML = `
+            <div class="flex-grow pr-2">
+                <p class="font-bold text-sm md:text-base">${item.name}</p>
+                <p class="text-sm text-gray-600">NT$ ${item.price}</p>
+            </div>
+            <div class="flex items-center">
+                <button class="cart-quantity-btn text-lg font-bold text-gray-500 hover:text-red-600 px-2 py-0" data-id="${item.id}" data-action="decrease">-</button>
+                <span class="w-8 text-center font-semibold">${item.quantity}</span>
+                <button class="cart-quantity-btn text-lg font-bold text-gray-500 hover:text-green-600 px-2 py-0" data-id="${item.id}" data-action="increase">+</button>
+            </div>
+            <div class="ml-2">
+                <button class="remove-from-cart-btn text-red-500 hover:text-red-700" data-id="${item.id}" title="移除商品">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </button>
+            </div>
+        `;
+        // ▲▲▲【核心修改】結束 ▲▲▲
+        cartItemsContainer.appendChild(itemEl);
+    });
+
+    if (totalItems > 0) {
+        cartCountEls.forEach(el => { el.textContent = totalItems; el.classList.remove('hidden'); });
+        if (menuCartDot) menuCartDot.classList.remove('hidden');
+    } else {
+        cartCountEls.forEach(el => el.classList.add('hidden'));
+        if (menuCartDot) menuCartDot.classList.add('hidden');
+    }
+}
 
     function renderCartTotal() {
         if (!cartTotalEl) return;
@@ -707,56 +728,47 @@ function createProductCard(product, stockData = {}) {
         }
 
         if (cartItemsContainer) {
-            cartItemsContainer.addEventListener('click', (event) => {
-                if (event.target && event.target.classList.contains('remove-from-cart-btn')) {
-                    const productId = event.target.dataset.id;
+    cartItemsContainer.addEventListener('click', (event) => {
+        const button = event.target.closest('button'); // 找到被點擊的按鈕
+        if (!button) return; // 如果點擊的不是按鈕，則不執行任何操作
+
+        const productId = button.dataset.id;
+        if (!productId) return;
+
+        // 判斷是哪個按鈕被點擊 (增加、減少、或移除)
+        const isRemoveBtn = button.classList.contains('remove-from-cart-btn');
+        const action = button.dataset.action;
+
+        const cartItem = cart.find(item => item.id === productId);
+        if (!cartItem) return;
+        
+        const stock = Number(stockMap[productId] ?? 0); // 從 stockMap 獲取庫存
+
+        if (isRemoveBtn) {
+            // --- 處理移除 ---
+            if (confirm(`確定要將「${cartItem.name}」從購物車中移除嗎？`)) {
+                removeFromCart(productId);
+            }
+        } else if (action === 'increase') {
+            // --- 處理增加數量 ---
+            if (cartItem.quantity < stock) {
+                cartItem.quantity++;
+            } else {
+                alert(`抱歉，「${cartItem.name}」的庫存已達上限 (${stock}件)，無法再增加。`);
+            }
+            updateCart();
+        } else if (action === 'decrease') {
+            // --- 處理減少數量 ---
+            if (cartItem.quantity > 1) {
+                cartItem.quantity--;
+                updateCart();
+            } else {
+                // 如果數量已是1，再減少就觸發移除
+                if (confirm(`確定要將「${cartItem.name}」從購物車中移除嗎？`)) {
                     removeFromCart(productId);
                 }
-            });
+            }
         }
-        
-// ▼▼▼ 請用這個新版本，完整替換掉舊的 productGrid 事件監聽器 ▼▼▼
-if (productGrid) {
-    productGrid.addEventListener('click', (event) => {
-        const buttonEl = event.target.closest('.add-to-cart-btn');
-        if (!buttonEl) return;
-
-        const productCard = buttonEl.closest('.coffee-card');
-        const productIdBase = productCard.dataset.productId;
-        const productName = buttonEl.dataset.name;
-
-        const selectedSpecEl = productCard.querySelector(`input[name="spec_${productIdBase}"]:checked`);
-        if (!selectedSpecEl) {
-            alert('請選擇一個商品規格！');
-            return;
-        }
-
-        if (selectedSpecEl.disabled) {
-            alert('此規格目前庫存不足，請選擇其他規格。');
-            return;
-        }
-
-        const specValue = selectedSpecEl.value;
-        const specName = selectedSpecEl.dataset.specName;
-        const price = parseInt(selectedSpecEl.dataset.price, 10);
-        const uniqueProductId = `${productIdBase}_${specValue}`;
-
-        // 【重要修正】直接從我們儲存的 stockMap 變數中檢查庫存，不再需要 fetch
-        const currentStock = Number(stockMap[uniqueProductId] ?? 999);
-        const quantityInCart = cart.find(item => item.id === uniqueProductId)?.quantity || 0;
-
-        if (quantityInCart >= currentStock) {
-            alert(`「${productName} (${specName})」庫存不足，您已將所有庫存加入購物車。`);
-            return;
-        }
-
-        // 所有檢查都通過後，才執行加入購物車
-        const product = {
-            id: uniqueProductId,
-            name: `${productName} (${specName})`,
-            price: price,
-        };
-        addToCart(product);
     });
 }
 
