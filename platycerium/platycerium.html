@@ -563,6 +563,27 @@
 </section>
 
     </main>
+    <section id="video-guide" class="bg-white py-16 md:py-24">
+    <div class="container mx-auto px-6 text-center">
+        <h2 class="text-3xl font-bold text-center mb-2 text-gray-800">栽培示範影片</h2>
+        <p class="text-center text-gray-500 mb-10">觀看影片，更了解鹿角蕨的上板與照護技巧</p>
+        
+        <div class="max-w-3xl mx-auto">
+            <a href="#" id="open-video-btn" data-youtube-id="dQw4w9WgXcQ" class="block relative rounded-lg overflow-hidden shadow-lg card-hover">
+                <img src="https://img.youtube.com/vi/dQw4w9WgXcQ/maxresdefault.jpg" alt="鹿角蕨上板教學影片封面" class="w-full">
+                <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                    <svg class="w-20 h-20 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                </div>
+            </a>
+        </div>
+    </div>
+</section>
+<div id="video-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+    <div class="bg-black w-full max-w-4xl aspect-video relative">
+        <button id="close-video-btn" class="absolute -top-10 right-0 text-white text-4xl hover:text-gray-300">&times;</button>
+        <div id="youtube-player-container" class="w-full h-full"></div>
+    </div>
+</div>
 
     <footer class="bg-gray-800 text-white py-8">
         <div class="container mx-auto px-6 text-center">
@@ -698,6 +719,47 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('載入計數器失敗:', err);
     el.textContent = '無法載入';
   }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const openVideoBtn = document.getElementById('open-video-btn');
+    const closeVideoBtn = document.getElementById('close-video-btn');
+    const videoModal = document.getElementById('video-modal');
+    const playerContainer = document.getElementById('youtube-player-container');
+
+    if (openVideoBtn) {
+        openVideoBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const youtubeId = this.dataset.youtubeId;
+            
+            // 產生 YouTube 播放器 Iframe
+            playerContainer.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            
+            // 顯示 Modal
+            videoModal.classList.remove('hidden');
+        });
+    }
+
+    if (closeVideoBtn) {
+        closeVideoBtn.addEventListener('click', function() {
+            // 隱藏 Modal
+            videoModal.classList.add('hidden');
+            // 清空播放器以停止影片播放
+            playerContainer.innerHTML = '';
+        });
+    }
+
+    // 點擊 Modal 背景也可以關閉視窗
+    if (videoModal) {
+        videoModal.addEventListener('click', function(e) {
+            // 確保是點擊黑色背景，而不是點擊影片本身
+            if (e.target === videoModal) {
+                videoModal.classList.add('hidden');
+                playerContainer.innerHTML = '';
+            }
+        });
+    }
 });
 </script>
 
