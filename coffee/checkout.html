@@ -124,10 +124,10 @@
                 itemEl.innerHTML = `<span>${item.name} x${item.quantity}</span><span>NT$ ${item.price * item.quantity}</span>`;
                 summaryItems.appendChild(itemEl);
             });
-            const shippingFee = subtotal >= 1 ? 0 : (shippingMethod === 'CVS' ? 60 : 80);
+            const shippingFee = subtotal >= 800 ? 0 : (shippingMethod === 'CVS' ? 60 : 80);
             total = subtotal + shippingFee;
             summarySubtotal.textContent = `NT$ ${subtotal}`;
-            summaryShipping.innerHTML = subtotal >= 1000 ? `NT$ ${shippingFee} (已達免運門檻)` : `NT$ ${shippingFee}`;
+            summaryShipping.innerHTML = subtotal >= 800 ? `NT$ ${shippingFee} (已達免運門檻)` : `NT$ ${shippingFee}`;
             summaryTotal.textContent = `NT$ ${total}`;
         }
         updateSummary(); // 頁面載入時先計算一次
