@@ -1,9 +1,9 @@
 [
   {
     "id": "prod_001",
-    "name": "衣索比亞 西達瑪 卡拉莫 遮蔭慢乾 日曬",
+    "name": "衣索比亞 西達瑪 卡拉莫 遮蔭慢乾 74158 日曬",
     "description": "風味描述：藍莓、橙汁、薰衣草、蔗糖",
-    "imageUrl": "/images/coffee/衣索比亞 卡拉莫 遮蔭慢乾 日曬.jpg",
+    "imageUrl": "/images/coffee/衣索比亞 西達瑪 卡拉莫 日曬.jpg",
     "category": [
       "light-medium"
     ],
@@ -45,7 +45,7 @@
     "id": "prod_003",
     "name": "衣索比亞 西達瑪 班莎鎮 黑騎村 日曬",
     "description": "風味描述：果乾、桃子、藍莓、蔗糖",
-    "imageUrl": "",
+    "imageUrl": "/images/coffee/衣索比亞 班莎 日曬.jpg",
     "category": [
       "light-medium"
     ],
@@ -87,7 +87,7 @@
     "id": "prod_005",
     "name": "肯亞 冽里 吉康達合作社 AB Top 水洗",
     "description": "風味描述：黑醋栗、烏梅、洛神花、蔗糖",
-    "imageUrl": "/images/coffee/肯亞 冽里 吉康達合作社 水洗.jpg",
+    "imageUrl": "/images/coffee/肯亞 吉康達合作社 水洗.jpg",
     "category": [
       "light-medium"
     ],
@@ -108,7 +108,7 @@
     "id": "prod_006",
     "name": "宏都拉斯 拉巴斯省 蜜桃莊園 卡杜艾 蜜處理",
     "description": "風味描述：橘皮、香瓜、烤杏仁、白糖",
-    "imageUrl": "/images/coffee/宏都拉斯 蜜桃莊園 卡杜艾.jpg",
+    "imageUrl": "/images/coffee/宏都拉斯 蜜桃莊園 蜜處理.jpg",
     "category": [
       "light-medium"
     ],
@@ -129,7 +129,7 @@
     "id": "prod_007",
     "name": "哥斯大黎加 塔拉珠 龐特薇處理廠 卡杜艾 日曬",
     "description": "風味描述：黑莓、葡萄乾、芒果、蔗糖",
-    "imageUrl": "/images/coffee/costa.jpg",
+    "imageUrl": "/images/coffee/哥斯大黎加 塔拉珠 龐特薇 日曬.jpg",
     "category": [
       "light-medium"
     ],
@@ -150,7 +150,7 @@
     "id": "prod_008",
     "name": "哥倫比亞 薇拉省 黃金酋長 水洗",
     "description": "風味描述：橘皮、烤堅果、奶油、蔗糖",
-    "imageUrl": "/images/coffee/哥倫比亞 薇拉省 水洗.jpg",
+    "imageUrl": "/images/coffee/哥倫比亞 黃金酋長.jpg",
     "category": [
       "medium-dark"
     ],
@@ -200,7 +200,28 @@
       {
         "id": "one-pound",
         "name": "一磅 (熟豆)",
-        "price": 540
+        "price": 30
+      }
+    ]
+  },
+  {
+    "id": "prod_011",
+    "name": "測試",
+    "description": "風味描述：葡萄乾、可可、蔗糖、堅果",
+    "imageUrl": "/images/coffee/竹意軒義式配方.jpg",
+    "category": [
+      "medium-dark"
+    ],
+    "specs": [
+      {
+        "id": "half-pound",
+        "name": "半磅 (熟豆)",
+        "price": 30
+      },
+      {
+        "id": "drip-bag-5",
+        "name": "濾掛包 (5入)",
+        "price": 30
       }
     ]
   }
