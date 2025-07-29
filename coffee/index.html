@@ -772,7 +772,55 @@ function createProductCard(product, stockData = {}) {
     });
 }
 
+// ▼▼▼【重要修補】請將這整段程式碼加到您的 JavaScript 中 ▼▼▼
+if (productGrid) {
+    productGrid.addEventListener('click', (event) => {
+        // 檢查被點擊的是否為「加入購物車」按鈕
+        if (!event.target.classList.contains('add-to-cart-btn')) {
+            return;
+        }
 
+        const card = event.target.closest('.coffee-card');
+        if (!card) return;
+
+        // 1. 獲取使用者選擇的規格 (spec)
+        const selectedSpecRadio = card.querySelector('input[type="radio"]:checked');
+        if (!selectedSpecRadio) {
+            alert('請先選擇一個商品規格！');
+            return;
+        }
+
+        // 2. 從 HTML 的 data-* 屬性中組合出商品資訊
+        const productIdBase = card.dataset.productId;
+        const specId = selectedSpecRadio.value;
+        const uniqueId = `${productIdBase}_${specId}`; // 組合出唯一的 ID，例如 "p001_half"
+
+        const productName = event.target.dataset.name;
+        const specName = selectedSpecRadio.dataset.specName;
+        const price = Number(selectedSpecRadio.dataset.price);
+        
+        // 3. 檢查庫存
+        const stock = Number(stockMap[uniqueId] ?? 0);
+        const itemInCart = cart.find(item => item.id === uniqueId);
+        const quantityInCart = itemInCart ? itemInCart.quantity : 0;
+
+        if (quantityInCart >= stock) {
+            alert(`抱歉，「${productName} - ${specName}」的庫存不足，您已選購 ${quantityInCart} 件，已達上限。`);
+            return;
+        }
+
+        // 4. 建立要加入購物車的商品物件
+        const productToAdd = {
+            id: uniqueId,
+            name: `${productName} - ${specName}`, // 組合品名與規格
+            price: price,
+        };
+
+        // 5. 呼叫現有的 addToCart 函式
+        addToCart(productToAdd);
+    });
+}
+// ▲▲▲ 修補程式碼結束 ▲▲▲
         if (cvsCheckoutBtn) { cvsCheckoutBtn.addEventListener('click', () => proceedToCheckout('CVS')); }
         if (homeDeliveryCheckoutBtn) { homeDeliveryCheckoutBtn.addEventListener('click', () => proceedToCheckout('HOME_DELIVERY')); }
     }
