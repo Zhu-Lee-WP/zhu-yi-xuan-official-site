@@ -582,8 +582,9 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = '/coffee/checkout.html';
     }
     
-// ▼▼▼ 請用這個新版本，完整替換掉舊的 createProductCard 函式 ▼▼▼
+// ▼▼▼ 請用這個新版本，完整替換掉您檔案中舊的 createProductCard 函式 ▼▼▼
 function createProductCard(product, stockData = {}) {
+    // --- 檢查商品規格庫存 (此段邏輯不變) ---
     const firstAvailableSpecIndex = product.specs.findIndex(spec => {
         const sku = `${product.id}_${spec.id}`;
         const stock = Number(stockData[sku] ?? 0);
@@ -622,22 +623,26 @@ function createProductCard(product, stockData = {}) {
         ? `<button class="w-full bg-gray-400 text-white font-bold py-1.5 px-2 rounded-lg cursor-not-allowed" disabled>庫存不足</button>`
         : `<button class="add-to-cart-btn w-full bg-green-700 hover:bg-green-800 text-white font-bold py-1.5 px-2 rounded-lg transition-colors duration-300 text-xs md:text-sm" data-name="${product.name}">加入購物車</button>`;
 
+    // --- 【新增功能】檢查商品是否包含 'sale' 分類，若有則產生促銷標示 ---
+    const isSaleProduct = product.category && product.category.includes('sale');
+    const saleBadgeHtml = isSaleProduct 
+        ? '<div class="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg transform rotate-6 z-10">促銷</div>' 
+        : '';
+
     return `
-        <div class="coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}">
+        <div class="relative coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}">
+            ${saleBadgeHtml}
             <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain">
             
             <div class="p-3 md:p-4 flex-grow flex flex-col">
-                
                 <div class="flex-grow">
                     <h3 class="text-sm md:text-base font-bold text-amber-800 mb-1">${product.name}</h3>
                     <p class="text-gray-600 text-xs md:text-sm leading-5">${product.description}</p>
                 </div>
-                
                 <div class="mt-auto pt-2">
                     <div class="space-y-1 mb-2">${specsHtml}</div>
                     <div>${buttonHtml}</div>
                 </div>
-
             </div>
         </div>
     `;
