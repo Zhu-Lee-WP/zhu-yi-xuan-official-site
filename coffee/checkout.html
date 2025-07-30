@@ -127,7 +127,7 @@
             const shippingFee = subtotal >= 800 ? 0 : (shippingMethod === 'CVS' ? 60 : 80);
             total = subtotal + shippingFee;
             summarySubtotal.textContent = `NT$ ${subtotal}`;
-            summaryShipping.innerHTML = subtotal >= 800 ? `NT$ ${shippingFee} (已達免運門檻)` : `NT$ ${shippingFee}`;
+            summaryShipping.innerHTML = subtotal >= 800 ? `NT$ ${shippingFee} (已達新官網活動免運門檻)` : `NT$ ${shippingFee}`;
             summaryTotal.textContent = `NT$ ${total}`;
         }
         updateSummary(); // 頁面載入時先計算一次

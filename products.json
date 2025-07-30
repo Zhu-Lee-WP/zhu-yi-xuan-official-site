@@ -203,26 +203,5 @@
         "price": 560
       }
     ]
-  },
-  {
-    "id": "prod_011",
-    "name": "測試",
-    "description": "風味描述：葡萄乾、可可、蔗糖、堅果",
-    "imageUrl": "/images/coffee/竹意軒義式配方.jpg",
-    "category": [
-      "medium-dark sale"
-    ],
-    "specs": [
-      {
-        "id": "half-pound",
-        "name": "半磅 (熟豆)",
-        "price": 30
-      },
-      {
-        "id": "drip-bag-5",
-        "name": "濾掛包 (5入)",
-        "price": 30
-      }
-    ]
   }
 ]
