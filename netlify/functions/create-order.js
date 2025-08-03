@@ -29,8 +29,10 @@ exports.handler = async function(event) {
         const hashIV = process.env.ECPAY_HASH_IV;
         const siteUrl = process.env.URL; // Netlify 提供的網站網址
 
-        // 產生這次交易獨一無二的訂單編號
-        const merchantTradeNo = `bamboo${new Date().getTime()}`;
+        // 產生這次交易獨一無二的訂單編號 (兼顧安全與 ECPay 20 字元長度限制)
+        const timestampPart = new Date().getTime().toString().slice(-10); // 取時間戳後10碼，確保變動性
+        const randomPart = Math.floor(Math.random() * 1000).toString().padStart(3, '0'); // 產生3位隨機數，不足補0
+        const merchantTradeNo = `bamboo${timestampPart}${randomPart}`; // 組合起來，總長度 6 + 10 + 3 = 19字元
 
         // 1. 【守門人機制】先將訂單資訊送到 n8n
         const n8nPayload = {
