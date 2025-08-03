@@ -1,2 +1,11 @@
 # Local Netlify folder
 .netlify
+
+# 忽略 Netlify 的本地環境變數檔案 (極其重要！)
+.env
+
+# 忽略所有安裝的輔助工具套件
+node_modules
+
+# 忽略 Mac 作業系統產生的檔案
+.DS_Store

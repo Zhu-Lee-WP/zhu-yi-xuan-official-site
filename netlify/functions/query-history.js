@@ -22,39 +22,42 @@ if (!admin.apps.length) {
 
 // 這是函式的主要進入點
 exports.handler = async function(event) {
-  // --- 步驟一：檢查並取得前端傳來的「通行證」(JWT) ---
   const authHeader = event.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    // 如果沒有通行證，回傳錯誤，拒絕存取
     return { statusCode: 401, body: JSON.stringify({ message: '未授權：缺少憑證' }) };
   }
   const token = authHeader.split('Bearer ')[1];
 
   try {
-    // --- 步驟二：請 Firebase 驗證通行證的真偽 ---
     const decodedToken = await admin.auth().verifyIdToken(token);
-    // 如果驗證成功，decodedToken 裡就會包含使用者的資訊，例如 email
     const userEmail = decodedToken.email;
 
-    // --- 步驟三：呼叫 n8n，並把「已驗證的 Email」傳過去 ---
     const n8nHistoryWebhookUrl = process.env.N8N_HISTORY_WEBHOOK_URL;
     if (!n8nHistoryWebhookUrl) {
-        return { statusCode: 500, body: JSON.stringify({ message: '後端服務設定不完整' })};
+        return { statusCode: 500, body: JSON.stringify({ message: '後端 n8n 網址設定不完整' })};
     }
 
-    // 將查詢請求轉發給 n8n，這次帶上的參數是 email
-    const response = await fetch(`${n8nHistoryWebhookUrl}?email=${userEmail}`);
+    // --- ↓↓↓ 以下是新的、更詳細的偵錯碼 ↓↓↓ ---
+    console.log("--- 開始 n8n 呼叫偵錯 ---");
+    console.log("讀取到的 n8n 網址:", n8nHistoryWebhookUrl);
+    const fullRequestUrl = `${n8nHistoryWebhookUrl}?email=${userEmail}`;
+    console.log("準備發出的完整請求網址:", fullRequestUrl);
+    
+    const response = await fetch(fullRequestUrl);
+    
+    console.log("收到來自 n8n 的回應狀態:", response.status, response.statusText);
     const data = await response.json();
+    console.log("從 n8n 收到的原始 JSON 資料:", data);
+    console.log("--- 結束 n8n 呼叫偵錯 ---");
+    // --- ↑↑↑ 偵錯碼結束 ↑↑↑ ---
 
-    // --- 步驟四：將 n8n 的回傳結果，直接回傳給前端 ---
     return {
         statusCode: 200,
         body: JSON.stringify(data)
     };
 
   } catch (error) {
-    // 如果 Firebase 驗證通行證失敗，會進到這裡
-    console.error('Token 驗證失敗或查詢出錯:', error);
+    console.error('Token 驗證失敗或後端執行出錯:', error);
     return {
         statusCode: 403,
         body: JSON.stringify({ message: '憑證無效或查詢失敗' })
