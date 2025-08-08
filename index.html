@@ -186,11 +186,39 @@
                 </p>
             </div>
         </section>
+        <section id="videos" class="py-4 md:py-8 bg-white">
+            <div class="container mx-auto px-6 max-w-7xl">
+                <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">品牌映像</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <a href="#" class="open-video-btn block relative rounded-lg overflow-hidden shadow-lg gallery-img" data-youtube-id="NfeJL7iEi8o">
+                        <img src="https://img.youtube.com/vi/NfeJL7iEi8o/maxresdefault.jpg" alt="羅漢松盆景雕塑 bonsai" class="w-full aspect-video object-cover">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                            <svg class="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        </div>
+                        <div class="absolute bottom-0 left-0 bg-black/50 text-white text-sm p-2 w-full text-center">羅漢松小苗雕塑</div>
+                    </a>
+                    <a href="#" class="open-video-btn block relative rounded-lg overflow-hidden shadow-lg gallery-img" data-youtube-id="wLuH3JH512I">
+                        <img src="https://img.youtube.com/vi/wLuH3JH512I/maxresdefault.jpg" alt="報歲蘭開花 cymbidium" class="w-full aspect-video object-cover">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                            <svg class="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        </div>
+                        <div class="absolute bottom-0 left-0 bg-black/50 text-white text-sm p-2 w-full text-center">報歲蘭"台北小姐"</div>
+                    </a>
+                    <a href="#" class="open-video-btn block relative rounded-lg overflow-hidden shadow-lg gallery-img" data-youtube-id="et9gt228bYM">
+                        <img src="https://img.youtube.com/vi/et9gt228bYM/maxresdefault.jpg" alt="娜娜乳香 Boswellia nana" class="w-full aspect-video object-cover">
+                        <div class="absolute inset-0 flex items-center justify-center bg-black/30">
+                            <svg class="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                        </div>
+                        <div class="absolute bottom-0 left-0 bg-black/50 text-white text-sm p-2 w-full text-center">娜娜乳香</div>
+                    </a>
+                </div>
+            </div>
+        </section>
         
         <!-- 照片藝廊 -->
         <section id="gallery" class="py-4 md:py-8 bg-gray-50">
             <div class="container mx-auto px-6">
-                <h2 class="text-3xl font-bold text-center mb-12 text-gray-800">品牌映像</h2>
+                
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     <!-- 圖片 1: 您可以替換成自己的圖片 -->
                     <div class="overflow-hidden rounded-lg shadow-lg">
@@ -213,6 +241,12 @@
         </section>
 
     </main>
+    <div id="video-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
+        <div class="bg-black w-full max-w-4xl aspect-video relative">
+            <button id="close-video-btn" class="absolute -top-10 right-0 text-white text-4xl hover:text-gray-300">&times;</button>
+            <div id="youtube-player-container" class="w-full h-full"></div>
+        </div>
+    </div>
 
     <!-- 頁尾 Footer -->
     <footer class="bg-gray-800 text-white py-4">
@@ -259,6 +293,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error('載入計數器失敗:', err);
     el.textContent = '無法載入';
   }
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const openVideoButtons = document.querySelectorAll('.open-video-btn'); 
+    const closeVideoBtn = document.getElementById('close-video-btn');
+    const videoModal = document.getElementById('video-modal');
+    const playerContainer = document.getElementById('youtube-player-container');
+
+    // 幫所有影片封面加上點擊事件
+    openVideoButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault(); // 防止點擊連結時頁面跳動
+            const youtubeId = this.dataset.youtubeId; // 取得影片ID
+            
+            // 將影片播放器放入彈出視窗中
+            playerContainer.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            
+            // 顯示彈出視窗
+            videoModal.classList.remove('hidden');
+        });
+    });
+
+    // 關閉按鈕的功能
+    function closeModal() {
+        videoModal.classList.add('hidden'); // 隱藏彈出視窗
+        playerContainer.innerHTML = ''; // 清空內容，這樣影片才會停止播放
+    }
+
+    closeVideoBtn.addEventListener('click', closeModal);
+
+    // 點擊彈出視窗以外的灰色區域也可以關閉
+    videoModal.addEventListener('click', function(e) {
+        if (e.target === videoModal) {
+            closeModal();
+        }
+    });
 });
 </script>
 
