@@ -156,7 +156,7 @@
     <div class="panel-content">
         <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">探索生活的綠意</h2>
         <p class="mb-8 text-lg">沉浸在鹿角蕨的奇妙世界</p>
-        <a href="platycerium/platycerium.html" class="entry-btn">
+        <a href="platycerium/platycerium.html" id="entry-platy" class="entry-btn">
             進入鹿角百科
         </a>
     </div>
@@ -168,7 +168,7 @@
                  <div class="panel-content">
                      <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold mb-4">品味日常的醇香</h2>
                      <p class="mb-8 text-lg">一杯咖啡，品嘗各地風土</p>
-                     <a href="coffee/index.html" class="entry-btn">進入咖啡工坊</a>
+                     <a href="coffee/index.html" id="entry-coffee" class="entry-btn">進入咖啡工坊</a>
                  </div>
              </div>
         </section>
@@ -310,7 +310,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const youtubeId = this.dataset.youtubeId; // 取得影片ID
             
             // 將影片播放器放入彈出視窗中
-            playerContainer.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+            playerContainer.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=00&enablejsapi=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
             
             // 顯示彈出視窗
             videoModal.classList.remove('hidden');
@@ -331,6 +331,28 @@ document.addEventListener('DOMContentLoaded', function() {
             closeModal();
         }
     });
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const platyBtn = document.getElementById('entry-platy');
+    const coffeeBtn = document.getElementById('entry-coffee');
+
+    if (platyBtn) {
+        platyBtn.addEventListener('click', function() {
+            gtag('event', 'navigation_click', {
+                'destination': '鹿角百科'
+            });
+        });
+    }
+
+    if (coffeeBtn) {
+        coffeeBtn.addEventListener('click', function() {
+            gtag('event', 'navigation_click', {
+                'destination': '咖啡工坊'
+            });
+        });
+    }
 });
 </script>
 
