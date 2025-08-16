@@ -625,8 +625,6 @@
             <a href="/privacy.html" class="hover:text-white transition-colors">隱私權政策</a>
         </div>
             <p class="text-sm text-gray-400 mt-2">為教育與推廣目的而建構的互動式網頁。</p>
-            <p class="text-sm text-gray-400 mt-4">
-                本頁瀏覽人次：<span id="view-counter" class="font-bold">載入中...</span>
         </div>
     </footer>
 
@@ -734,23 +732,6 @@
             });
         });
     });
-</script>
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-  const el = document.getElementById('view-counter');
-  const namespace = 'bamboosite';     // 自訂，類似舊的「namespace」
-  const name      = 'main-page';      // 自訂，類似舊的「key」
-
-  try {
-    // 每次載入 +1 並回傳最新值
-    const res  = await fetch(`https://api.counterapi.dev/v1/ZueYiXuan-page/platycerium-page/up`);
-    const data = await res.json();        // 回傳格式：{ namespace, name, count }
-    el.textContent = data.count;
-  } catch (err) {
-    console.error('載入計數器失敗:', err);
-    el.textContent = '無法載入';
-  }
-});
 </script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {

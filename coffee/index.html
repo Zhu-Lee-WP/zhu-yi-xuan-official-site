@@ -492,9 +492,6 @@
         <div class="container mx-auto px-6 text-center">
             <p>© 2025 竹意軒的咖啡工坊. All Rights Reserved.</p>
             <p class="text-sm text-gray-400 mt-2">烘一鍋咖啡，再沖出生活的美好。</p>
-            <p class="text-sm text-gray-400 mt-4">
-                本頁瀏覽人次：<span id="view-counter" class="font-bold">載入中...</span>
-            </p>
             <div class="mt-4 text-sm text-gray-400 space-x-4">
             <a href="/terms.html" class="hover:text-white transition-colors">服務條款</a>
             <span>|</span>
@@ -502,22 +499,6 @@
         </div>
         </div>
     </footer>
-<script>
-document.addEventListener('DOMContentLoaded', async () => {
-  const el = document.getElementById('view-counter');
-  
-  try {
-    // 每次載入 +1 並回傳最新值
-    // 我們為主頁設定一個專屬的計數器 ID: "main-page"
-    const res  = await fetch(`https://api.counterapi.dev/v1/ZueYiXuan-page/main-page/up`);
-    const data = await res.json();
-    el.textContent = data.count;
-  } catch (err) {
-    console.error('載入計數器失敗:', err);
-    el.textContent = '無法載入';
-  }
-});
-</script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     // --- 區塊 1: 變數宣告 ---
