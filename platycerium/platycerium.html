@@ -8,6 +8,7 @@
       gtag('js', new Date());
 
       gtag('config', 'G-N2K3Q07F4X');
+      
     </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,6 +63,17 @@
             font-size: 0.875rem;
         }
         }
+        /* --- ↓↓↓ 這就是我們新增用來調整視窗大小的設定 ↓↓↓ --- */
+        #modal-container .bg-white {
+            max-width: 600px;  /* 限制白色視窗最寬就是 600px */
+            width: 85%;       /* 在手機上，寬度是螢幕的 90% */
+        }
+        
+        #modal-container #modal-image {
+            max-height: 70vh; /* 限制照片最高就是螢幕高度的 70% */
+            object-fit: contain; /* 確保圖片能完整顯示 */
+        }
+        /* --- ↑↑↑ 新增的設定到此結束 ↑↑↑ --- */
     </style>
 </head>
 <body class="bg-gray-50">
