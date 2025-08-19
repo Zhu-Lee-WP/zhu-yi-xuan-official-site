@@ -144,7 +144,7 @@
             <h2 class="text-3xl font-bold text-center mb-2 text-gray-800">兩種型態的葉片</h2>
             <p class="text-center text-gray-500 mb-10">肩負著不同的功能</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
-                <div class="bg-white p-8 rounded-lg shadow-md card-hover flex flex-col items-center text-center">
+                <div id="nutrition-card" data-title="營養葉 (臉)" data-img="/images/營養葉.jpg" class="bg-white p-8 rounded-lg shadow-md card-hover flex flex-col items-center text-center cursor-pointer">
                     <div class="w-24 h-24 mb-4 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
                     </div>
@@ -153,7 +153,7 @@
                         又稱為「盾狀葉」。它們是不會產生孢子的葉片，像盾牌一樣平貼在樹幹上，保護根系。重要的是，它向上伸展的葉冠能有效地接住落葉、雨水，打造一個蒐集養分與水分的「資源巢」。
                     </p>
                 </div>
-                <div class="bg-white p-8 rounded-lg shadow-md card-hover flex flex-col items-center text-center">
+                <div id="spore-card" data-title="孢子葉 (手)" data-img="/images/孢子葉.jpg" class="bg-white p-8 rounded-lg shadow-md card-hover flex flex-col items-center text-center cursor-pointer">
                     <div class="w-24 h-24 mb-4 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="#166534" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-wheat-icon lucide-wheat"><path d="M2 22 16 8"/><path d="M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/><path d="M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/><path d="M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"/><path d="M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"/><path d="M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"/><path d="M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"/><path d="M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"/></svg>
                     </div>
@@ -770,7 +770,62 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+// --- 彈出視窗 Modal 的程式碼 ---
+document.addEventListener('DOMContentLoaded', function() {
+    // 找到我們需要的 HTML 元素
+    const modalContainer = document.getElementById('modal-container');
+    const modalImage = document.getElementById('modal-image');
+    const modalTitle = document.getElementById('modal-title');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+
+    const nutritionCard = document.getElementById('nutrition-card');
+    const sporeCard = document.getElementById('spore-card');
+
+    // 定義一個打開視窗的函式
+    const openModal = function(title, imageUrl) {
+        modalTitle.textContent = title; // 設定視窗標題
+        modalImage.src = imageUrl;      // 設定圖片路徑
+        modalContainer.classList.remove('hidden'); // 移除 hidden class 來顯示視窗
+    };
+
+    // 定義一個關閉視窗的函式
+    const closeModal = function() {
+        modalContainer.classList.add('hidden'); // 加上 hidden class 來隱藏視窗
+    };
+
+    // 為營養葉卡片加上點擊事件監聽
+    nutritionCard.addEventListener('click', function() {
+        const title = this.dataset.title; // 讀取 data-title 屬性
+        const imageUrl = this.dataset.img; // 讀取 data-img 屬性
+        openModal(title, imageUrl);
+    });
+
+    // 為孢子葉卡片加上點擊事件監聽
+    sporeCard.addEventListener('click', function() {
+        const title = this.dataset.title;
+        const imageUrl = this.dataset.img;
+        openModal(title, imageUrl);
+    });
+
+    // 為關閉按鈕加上點擊事件監聽
+    closeModalBtn.addEventListener('click', closeModal);
+
+    // 點擊視窗外的黑色背景也可以關閉視窗
+    modalContainer.addEventListener('click', function(event) {
+        // 檢查點擊的對象是否是黑色背景本身
+        if (event.target === modalContainer) {
+            closeModal();
+        }
+    });
+});
 </script>
+<div id="modal-container" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-lg shadow-xl w-full max-w-lg relative">
+        <img id="modal-image" src="" alt="鹿角蕨葉片照片" class="w-full h-auto rounded-t-lg">
+        <h3 id="modal-title" class="text-2xl font-bold p-4 text-gray-800"></h3>
+        <button id="close-modal-btn" class="absolute -top-4 -right-4 text-white bg-gray-800 rounded-full h-10 w-10 flex items-center justify-center text-2xl font-bold hover:bg-gray-600">&times;</button>
+    </div>
+</div>
 
 </body>
 </html>
