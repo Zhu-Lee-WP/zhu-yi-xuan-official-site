@@ -1,8 +1,8 @@
 [
   {
     "id": "prod_giftbox_2025",
-    "name": "2025 中秋咖啡禮盒預購",
-    "description": "點擊照片查看資訊",
+    "name": "【預購】2025 中秋咖啡禮盒",
+    "description": "點擊照片查看資訊<br><span class='text-red-600 font-bold'>NT$ 420</span> <span class='text-gray-500 line-through'>NT$ 460</span>",
     "imageUrl": "/images/giftbox/中秋宣傳2.jpg",
     "category": [
       ""
