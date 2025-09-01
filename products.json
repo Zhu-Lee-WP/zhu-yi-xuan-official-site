@@ -1,5 +1,22 @@
 [
   {
+    "id": "prod_giftbox_2025",
+    "name": "2025 中秋咖啡禮盒預購",
+    "description": "點擊照片查看資訊",
+    "imageUrl": "/images/giftbox/中秋宣傳2.jpg",
+    "category": [
+      ""
+    ],
+    "specs": [
+      {
+        "id": "set",
+        "name": "【預購】掛耳包禮盒",
+        "price": 420
+      }
+    ]
+  }
+  ,
+  {
     "id": "prod_001",
     "name": "衣索比亞 古吉 烏拉嘎 果咕咕 日曬",
     "description": "風味描述：藍莓、葡萄、梔子花、蔗糖",
@@ -227,3 +244,4 @@
     ]
   }
 ]
+ 

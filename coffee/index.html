@@ -204,6 +204,11 @@
         </div>
     </div>
 </section>
+<section class="w-full bg-[#4A5C50]">
+    <a href="#product-list">
+        <img src="/images/giftbox/橫幅.jpg" alt="中秋禮盒預購中，點擊查看" class="w-full h-auto">
+    </a>
+</section>
 
     <main class="container mx-auto px-6 py-12 md:py-20">
 
@@ -459,7 +464,16 @@
     </div>
 </section>
 
-    </main><div id="cart-sidebar" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+    </main>
+    <div id="giftbox-modal" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 transition-opacity duration-300">
+    <div class="bg-white rounded-lg shadow-xl max-w-5xl w-full relative">
+        <button id="close-giftbox-modal-btn" class="absolute -top-3 -right-3 bg-white rounded-full p-1 text-gray-700 hover:text-red-500 z-10">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </button>
+        <img src="/images/giftbox/中秋宣傳.jpg" alt="中秋禮盒詳細預購資訊" class="w-full h-auto rounded-lg">
+    </div>
+</div>
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 z-50 w-full max-w-md bg-white shadow-xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
         <div class="flex justify-between items-center p-4 border-b bg-gray-50">
             <h2 class="text-xl font-bold text-gray-800">您的購物車</h2>
             <button id="close-cart-btn" class="text-gray-500 hover:text-gray-800">
@@ -576,8 +590,33 @@ function renderCartItems() {
         const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         cartTotalEl.textContent = `NT$ ${total}`;
     }
-    
-    function updateCart() { renderCartItems(); renderCartTotal(); saveCart(); }
+    function updateCheckoutButtonsState() {
+    const cvsCheckoutBtn = document.getElementById('cvs-checkout-btn');
+    if (!cvsCheckoutBtn) return; // 如果找不到按鈕就結束
+
+    // 找出購物車裡的中秋禮盒 (ID 組合為 prod_giftbox_2025_set)
+    const giftboxId = 'prod_giftbox_2025_set';
+    const giftboxInCart = cart.find(item => item.id === giftboxId);
+    const giftboxQuantity = giftboxInCart ? giftboxInCart.quantity : 0;
+
+    if (giftboxQuantity >= 3) {
+        // 如果禮盒數量達到或超過3盒
+        cvsCheckoutBtn.disabled = true; // 禁用按鈕
+        cvsCheckoutBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        cvsCheckoutBtn.textContent = '禮盒超過3件，請選郵寄'; // 更改按鈕文字
+    } else {
+        // 否則，恢復按鈕正常狀態
+        cvsCheckoutBtn.disabled = false;
+        cvsCheckoutBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+        cvsCheckoutBtn.textContent = '超商取貨結帳';
+    }
+}
+    function updateCart() {
+    renderCartItems();
+    renderCartTotal();
+    saveCart();
+    updateCheckoutButtonsState(); // 【新增】在每次購物車更新時，檢查結帳按鈕狀態
+}
 
     function addToCart(product) {
         const existingItem = cart.find(item => item.id === product.id);
@@ -600,10 +639,15 @@ function createProductCard(product, stockData = {}) {
     // --- 智慧判斷商品是否促銷 (可處理字串或陣列) ---
     let isSaleProduct = false;
     if (product.category) {
-        // 將 category 內容統一轉成字串來判斷，並忽略大小寫
         const categoryString = Array.isArray(product.category) ? product.category.join(' ') : String(product.category);
         isSaleProduct = categoryString.toLowerCase().includes('sale');
     }
+
+    // --- 【新增功能】判斷是否為禮盒商品 ---
+    const isGiftbox = product.id === 'prod_giftbox_2025';
+    const imageClasses = isGiftbox ? 'w-full h-32 md:h-40 object-contain cursor-pointer' : 'w-full h-32 md:h-40 object-contain';
+    const imageAction = isGiftbox ? 'data-action="open-giftbox-modal"' : '';
+    // --- 新增結束 ---
 
     // --- 處理商品規格 (Specs) ---
     const firstAvailableSpecIndex = product.specs.findIndex(spec => {
@@ -620,7 +664,6 @@ function createProductCard(product, stockData = {}) {
         const isOutOfStock = stock <= 0;
         const isLowStock = stock > 0 && stock <= 2;
         
-        // 如果整個商品是促銷品，那麼這個規格也視為促銷
         const isSaleSpec = isSaleProduct; 
 
         specsHtml += `
@@ -650,7 +693,7 @@ function createProductCard(product, stockData = {}) {
 
     return `
         <div class="relative coffee-card bg-white rounded-lg shadow-lg overflow-hidden card-hover flex flex-col" data-product-id="${product.id}" data-category="${product.category}">
-            <img src="${product.imageUrl}" alt="${product.name}" class="w-full h-32 md:h-40 object-contain">
+            <img src="${product.imageUrl}" alt="${product.name}" class="${imageClasses}" ${imageAction}>
             
             <div class="p-3 md:p-4 flex-grow flex flex-col">
                 <div class="flex-grow">
@@ -670,12 +713,13 @@ function createProductCard(product, stockData = {}) {
     async function initializeShop() {
         try {
             const [productResponse, stockResponse] = await Promise.all([ fetch('/products.json'), fetch('/.netlify/functions/query-stock') ]);
-            if (!productResponse.ok) throw new Error(`無法讀取商品資料`);
+           if (!productResponse.ok) throw new Error(`無法讀取商品資料`);
             if (!stockResponse.ok) throw new Error(`無法讀取庫存資料`);
             const products = await productResponse.json();
             const stockData = await stockResponse.json();
             stockMap = stockData; // 【新增】將庫存資料存起來
-            productGrid.innerHTML = products.map(product => createProductCard(product, stockData)).join('');
+            productGrid.innerHTML = products.map(product => createProductCard(product, stockData)).join(''); 
+        
 
             const coffeeCards = document.querySelectorAll('.coffee-card');
             filterButtons.forEach(button => {
@@ -696,6 +740,29 @@ function createProductCard(product, stockData = {}) {
     }
 
     function initializeEventListeners() {
+        const giftboxModal = document.getElementById('giftbox-modal');
+const closeGiftboxModalBtn = document.getElementById('close-giftbox-modal-btn');
+
+if (giftboxModal && closeGiftboxModalBtn) {
+    // 點擊商品區塊，檢查是否點到禮盒圖片
+    productGrid.addEventListener('click', (event) => {
+        if (event.target.dataset.action === 'open-giftbox-modal') {
+            giftboxModal.classList.remove('hidden');
+        }
+    });
+
+    // 點擊關閉按鈕
+    closeGiftboxModalBtn.addEventListener('click', () => {
+        giftboxModal.classList.add('hidden');
+    });
+
+    // 點擊灰色背景區域也可以關閉
+    giftboxModal.addEventListener('click', (event) => {
+        if (event.target === giftboxModal) {
+            giftboxModal.classList.add('hidden');
+        }
+    });
+}
         if (menuBtn) { menuBtn.addEventListener('click', () => { if (mobileMenu) mobileMenu.classList.toggle('hidden'); }); }
 
         if (feedbackForm) {
